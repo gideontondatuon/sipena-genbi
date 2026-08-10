@@ -214,8 +214,19 @@ class UserLaporanController extends Controller
             abort(403);
         }
 
+        // Delete physical image files from disk to keep storage clean
+        if ($laporan->bukti_like) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_like);
+        }
+        if ($laporan->bukti_komen) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_komen);
+        }
+        if ($laporan->bukti_share) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_share);
+        }
+
         $laporan->delete();
 
-        return redirect()->back()->with('success', 'Postingan laporan berhasil dihapus.');
+        return redirect()->back()->with('success', 'Postingan laporan dan file foto berhasil dihapus dari server.');
     }
 }
