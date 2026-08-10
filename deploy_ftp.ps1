@@ -1,6 +1,6 @@
 # Script Automated FTP Uploader for SIPENA GenBI
 param (
-    [string]$FtpPassword = "#Gideon1709"
+    [string]$FtpPassword = "1vGjch5MmTj"
 )
 
 $ftpHost = "ftpupload.net"
