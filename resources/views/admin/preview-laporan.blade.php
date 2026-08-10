@@ -467,6 +467,13 @@
                         <span class="badge bg-light text-dark border px-2.5 py-1.5 fw-semibold small">
                             <i class="bi bi-instagram me-1 text-primary"></i> {{ $akun->username ? (str_starts_with($akun->username, '@') ? $akun->username : '@'.$akun->username) : $akun->nama_akun }}
                         </span>
+                        <form action="{{ route('admin.validasi.destroy', $laporan->id) }}" method="POST" class="d-inline no-print" onsubmit="return confirm('Apakah Anda yakin ingin menghapus postingan laporan ini beserta bukti fotonya dari server?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2 fw-semibold rounded-3" title="Hapus Laporan Ini">
+                                <i class="bi bi-trash3-fill me-1"></i> Hapus
+                            </button>
+                        </form>
                     </div>
                 </div>
 

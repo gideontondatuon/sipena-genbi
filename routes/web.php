@@ -76,6 +76,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/validasi', [AdminValidasiController::class, 'index'])->name('validasi.index');
     Route::post('/validasi/bulk', [AdminValidasiController::class, 'bulkValidasi'])->name('validasi.bulk');
     Route::post('/validasi/{laporan}', [AdminValidasiController::class, 'validasi'])->name('validasi.proses');
+    Route::delete('/validasi/{laporan}', [AdminValidasiController::class, 'destroy'])->name('validasi.destroy');
 
     // Rekap
     Route::get('/rekap', [AdminRekapController::class, 'index'])->name('rekap.index');

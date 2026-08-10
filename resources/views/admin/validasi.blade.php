@@ -219,6 +219,10 @@
                             <a href="{{ route('admin.preview-laporan', ['user_id' => $laporan->user_id]) }}" class="btn btn-outline-primary btn-sm rounded-4 w-100 mt-2">
                                 <i class="bi bi-eye-fill me-1"></i> Preview Detail Anggota
                             </a>
+
+                            <button type="button" onclick="confirmDeleteLaporan('{{ route('admin.validasi.destroy', $laporan->id) }}')" class="btn btn-outline-danger btn-sm rounded-4 w-100 mt-1 fw-semibold">
+                                <i class="bi bi-trash3-fill me-1"></i> Hapus Laporan & Foto
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -237,6 +241,12 @@
     @csrf
     <input type="hidden" name="status" id="singleStatus">
     <input type="hidden" name="catatan_admin" id="singleCatatanAdmin">
+</form>
+
+<!-- Hidden Form for Admin Report Deletion -->
+<form id="deleteLaporanForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
 </form>
 
 @section('scripts')
@@ -268,6 +278,14 @@
         document.getElementById('singleStatus').value = status;
         document.getElementById('singleCatatanAdmin').value = catatan;
         form.submit();
+    }
+
+    function confirmDeleteLaporan(actionUrl) {
+        if (confirm('Apakah Anda yakin ingin menghapus postingan laporan ini? File foto bukti screenshot juga akan dihapus permanen dari server.')) {
+            const form = document.getElementById('deleteLaporanForm');
+            form.action = actionUrl;
+            form.submit();
+        }
     }
 </script>
 @endsection

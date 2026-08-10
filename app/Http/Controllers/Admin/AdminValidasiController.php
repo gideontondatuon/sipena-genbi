@@ -113,4 +113,22 @@ class AdminValidasiController extends Controller
         $statusText = $request->status === 'valid' ? 'disetujui' : 'ditolak';
         return redirect()->back()->with('success', "Berhasil: {$count} laporan terpilih telah {$statusText} secara masal.");
     }
+
+    public function destroy(Laporan $laporan)
+    {
+        // Delete physical image files from storage disk
+        if ($laporan->bukti_like) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_like);
+        }
+        if ($laporan->bukti_komen) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_komen);
+        }
+        if ($laporan->bukti_share) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_share);
+        }
+
+        $laporan->delete();
+
+        return redirect()->back()->with('success', 'Laporan anggota berhasil dihapus permanently dari sistem dan storage.');
+    }
 }
