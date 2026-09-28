@@ -33,10 +33,40 @@ echo -e "${YELLOW}[1/8] Memperbarui paket sistem Ubuntu...${NC}"
 apt-get update -y
 apt-get install -y software-properties-common curl git unzip ufw nginx mariadb-server
 
-# 3. Setup Repository PHP Ondrej (untuk PHP 8.2)
+# 3. Setup Repository PHP Ondrej (untuk PHP 8.2) tanpa ketergantungan Python add-apt-repository
 echo -e "${YELLOW}[2/8] Memeriksa & Menginstal PHP 8.2 beserta ekstensi...${NC}"
+apt-get install -y ca-certificates gnupg curl
+
 if ! dpkg -s php8.2-fpm >/dev/null 2>&1; then
-    add-apt-repository -y ppa:ondrej/php
+    echo -e "${CYAN}Menyiapkan GPG Key & Repository Ondrej PHP...${NC}"
+    mkdir -p /etc/apt/keyrings
+    cat << 'EOF' > /tmp/ondrej-php.asc
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: Hockeypuck 2.2
+
+xo0ESX35nAEEALKDCUDVXvmW9n+T/+3G1DnTpoWh9/1xNaz/RrUH6fQKhHr568F8
+hfnZP/2CGYVYkW9hxP9LVW9IDvzcmnhgIwK+ddeaPZqh3T/FM4OTA7Q78HSvR81m
+Jpf2iMLm/Zvh89ZsmP2sIgZuARiaHo8lxoTSLtmKXsM3FsJVlusyewHfABEBAAHN
+H0xhdW5jaHBhZCBQUEEgZm9yIE9uZMWZZWogU3Vyw73CtgQTAQIAIAUCSX35nAIb
+AwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEE9OoKrlJnpsQjYD/jW1NlIFAlT6
+EvF2xfVbkhERii9MapjaUsSso4XLCEmZdEGX54GQ01svXnrivwnd/kmhKvyxCqiN
+LDY/dOaK8MK//bDI6mqdKmG8XbP2vsdsxhifNC+GH/OwaDPvn1TyYB653kwyruCG
+FjEnCreZTcRUu2oBQyolORDl+BmF4DjLwsBzBBABCgAdFiEECvaBvTqO/UqmWMI/
+thEcm0xImQEFAmXTV0AACgkQthEcm0xImQGTTggAhuMHGeBZlRUAsZE7jJM7Mf06
+/WIhcgUfBfSFnJFlFH+xdEe/GFYyVk9kingDsPh90Ecnt4n8DJHTlsuUV1+SPBIO
+JfbQTUjx1n/+Ck+TVKzRByvrpRXtiZQ214m3zbhZpme2eBBMItZByjG7g925NUIq
+rL+R5ZoEcZvVlYscfsA0Sr8yJTsGJPefuLYI6eJkNDa1QkzBkSSW4XaCfNIxNBRs
+zN/qGe3xy0bibOaC4T2TcbZPSAVP855ahNbLAdqkyfAutiEWcKZmQpR9qNh4482k
+0pXVlQJ8UB860gVFHjwjFm/MsCeX8yfeAi38ZyInWL2OSG2pDx5ZzNESwnCPIg==
+=3DzI
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+    gpg --dearmor --yes -o /etc/apt/keyrings/ondrej-php.gpg /tmp/ondrej-php.asc
+    rm -f /tmp/ondrej-php.asc
+
+    CODENAME=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2 || echo "jammy")
+    echo "deb [signed-by=/etc/apt/keyrings/ondrej-php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu ${CODENAME} main" > /etc/apt/sources.list.d/ondrej-php.list
+
     apt-get update -y
     apt-get install -y php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring \
                        php8.2-curl php8.2-zip php8.2-gd php8.2-intl php8.2-bcmath
