@@ -80,13 +80,24 @@ if ! command -v composer &> /dev/null; then
     rm /tmp/composer-setup.php
 fi
 
-# 5. Setup Database MariaDB
-echo -e "${YELLOW}[4/8] Mengatur Database MariaDB (sipena_genbi)...${NC}"
+# 5. Setup Database MariaDB & User Aplikasi Khusus
+echo -e "${YELLOW}[4/8] Mengatur Database MariaDB (sipena_genbi) & User Aplikasi...${NC}"
 systemctl start mariadb || systemctl start mysql
 systemctl enable mariadb || systemctl enable mysql
 
-mysql -e "CREATE DATABASE IF NOT EXISTS \`sipena_genbi\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-echo -e "${GREEN}Database 'sipena_genbi' siap!${NC}"
+DB_NAME="sipena_genbi"
+DB_USER="sipena_user"
+DB_PASS="SipenaGenbi2026!"
+
+mysql -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -e "CREATE USER IF NOT EXISTS '${DB_USER}'@'127.0.0.1' IDENTIFIED BY '${DB_PASS}';"
+mysql -e "CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+mysql -e "ALTER USER '${DB_USER}'@'127.0.0.1' IDENTIFIED BY '${DB_PASS}';"
+mysql -e "ALTER USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+mysql -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'127.0.0.1';"
+mysql -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';"
+mysql -e "FLUSH PRIVILEGES;"
+echo -e "${GREEN}Database '${DB_NAME}' dan user '${DB_USER}' berhasil disiapkan!${NC}"
 
 # 6. Setup Direktori Aplikasi
 echo -e "${YELLOW}[5/8] Mengonfigurasi Aplikasi Laravel di ${APP_DIR}...${NC}"
@@ -104,23 +115,34 @@ if [ ! -f "$APP_DIR/.env" ]; then
     cp "$APP_DIR/.env.example" "$APP_DIR/.env"
 fi
 
-# Sesuaikan konfigurasi .env untuk SewaNode NAT VPS
-sed -i 's/^APP_ENV=.*/APP_ENV=production/' "$APP_DIR/.env"
-sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/' "$APP_DIR/.env"
-sed -i "s|^APP_URL=.*|APP_URL=http://${PUBLIC_IP}:${WEB_PORT}|" "$APP_DIR/.env"
+# Bersihkan konfigurasi lama agar tidak bentrok dengan comment (#)
+sed -i '/^#* *APP_ENV=/d' "$APP_DIR/.env"
+sed -i '/^#* *APP_DEBUG=/d' "$APP_DIR/.env"
+sed -i '/^#* *APP_URL=/d' "$APP_DIR/.env"
+sed -i '/^#* *DB_/d' "$APP_DIR/.env"
 
-sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' "$APP_DIR/.env"
-sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' "$APP_DIR/.env"
-sed -i 's/^DB_PORT=.*/DB_PORT=3306/' "$APP_DIR/.env"
-sed -i 's/^DB_DATABASE=.*/DB_DATABASE=sipena_genbi/' "$APP_DIR/.env"
-sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' "$APP_DIR/.env"
-sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' "$APP_DIR/.env"
+# Tulis konfigurasi baru yang valid
+cat <<EOF >> "$APP_DIR/.env"
 
-# Install Dependencies PHP
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=http://${PUBLIC_IP}:${WEB_PORT}
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=${DB_NAME}
+DB_USERNAME=${DB_USER}
+DB_PASSWORD=${DB_PASS}
+EOF
+
 # Install Dependencies PHP
 echo -e "${CYAN}Menjalankan composer install...${NC}"
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=php+
+
+# Bersihkan config cache agar Laravel membaca konfigurasi .env yang baru
+php artisan config:clear || true
 
 # Generate App Key jika belum ada
 php artisan key:generate --force
