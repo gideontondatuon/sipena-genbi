@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('username')->unique()->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
@@ -21,6 +22,13 @@ return new class extends Migration
             $table->string('status')->default('aktif'); // aktif, nonaktif
             $table->string('phone')->nullable();
             $table->string('nim')->nullable();
+            $table->string('jurusan')->nullable();
+            $table->string('prodi')->nullable();
+            $table->string('divisi')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->string('angkatan')->nullable();
+            $table->string('avatar')->nullable();
+            $table->text('bio')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
