@@ -18,7 +18,7 @@ git pull origin main
 
 echo -e "${CYAN}Menginstal dependensi Composer terbaru...${NC}"
 export COMPOSER_ALLOW_SUPERUSER=1
-composer install --no-dev --optimize-autoloader --no-interaction
+composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=php+
 
 echo -e "${CYAN}Menjalankan migrasi database baru jika ada...${NC}"
 php artisan migrate --force
@@ -39,6 +39,6 @@ chown -R www-data:www-data "$APP_DIR"
 chmod -R 775 "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
 
 systemctl reload nginx
-systemctl reload php8.2-fpm || true
+systemctl reload php8.4-fpm 2>/dev/null || systemctl reload php8.2-fpm 2>/dev/null || true
 
 echo -e "${GREEN}Update selesai dengan sukses!${NC}"

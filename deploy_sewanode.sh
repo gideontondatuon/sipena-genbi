@@ -33,14 +33,12 @@ echo -e "${YELLOW}[1/8] Memperbarui paket sistem Ubuntu...${NC}"
 apt-get update -y
 apt-get install -y software-properties-common curl git unzip ufw nginx mariadb-server
 
-# 3. Setup Repository PHP Ondrej (untuk PHP 8.2) tanpa ketergantungan Python add-apt-repository
-echo -e "${YELLOW}[2/8] Memeriksa & Menginstal PHP 8.2 beserta ekstensi...${NC}"
+# 3. Setup Repository PHP Ondrej (untuk PHP 8.4) tanpa ketergantungan Python add-apt-repository
+echo -e "${YELLOW}[2/8] Memeriksa & Menginstal PHP 8.4 beserta ekstensi...${NC}"
 apt-get install -y ca-certificates gnupg curl
 
-if ! dpkg -s php8.2-fpm >/dev/null 2>&1; then
-    echo -e "${CYAN}Menyiapkan GPG Key & Repository Ondrej PHP...${NC}"
-    mkdir -p /etc/apt/keyrings
-    cat << 'EOF' > /tmp/ondrej-php.asc
+mkdir -p /etc/apt/keyrings
+cat << 'EOF' > /tmp/ondrej-php.asc
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: Hockeypuck 2.2
 
@@ -61,16 +59,17 @@ zN/qGe3xy0bibOaC4T2TcbZPSAVP855ahNbLAdqkyfAutiEWcKZmQpR9qNh4482k
 =3DzI
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
-    gpg --dearmor --yes -o /etc/apt/keyrings/ondrej-php.gpg /tmp/ondrej-php.asc
-    rm -f /tmp/ondrej-php.asc
+gpg --dearmor --yes -o /etc/apt/keyrings/ondrej-php.gpg /tmp/ondrej-php.asc
+rm -f /tmp/ondrej-php.asc
 
-    CODENAME=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2 || echo "jammy")
-    echo "deb [signed-by=/etc/apt/keyrings/ondrej-php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu ${CODENAME} main" > /etc/apt/sources.list.d/ondrej-php.list
+CODENAME=$(lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2 || echo "jammy")
+echo "deb [signed-by=/etc/apt/keyrings/ondrej-php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu ${CODENAME} main" > /etc/apt/sources.list.d/ondrej-php.list
 
-    apt-get update -y
-    apt-get install -y php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring \
-                       php8.2-curl php8.2-zip php8.2-gd php8.2-intl php8.2-bcmath
-fi
+apt-get update -y
+apt-get install -y php8.4-fpm php8.4-cli php8.4-mysql php8.4-xml php8.4-mbstring \
+                   php8.4-curl php8.4-zip php8.4-gd php8.4-intl php8.4-bcmath
+
+update-alternatives --set php /usr/bin/php8.4 2>/dev/null || true
 
 # 4. Install Composer jika belum ada
 echo -e "${YELLOW}[3/8] Memeriksa Composer...${NC}"
@@ -118,9 +117,10 @@ sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' "$APP_DIR/.env"
 sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' "$APP_DIR/.env"
 
 # Install Dependencies PHP
+# Install Dependencies PHP
 echo -e "${CYAN}Menjalankan composer install...${NC}"
 export COMPOSER_ALLOW_SUPERUSER=1
-composer install --no-dev --optimize-autoloader --no-interaction
+composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=php+
 
 # Generate App Key jika belum ada
 php artisan key:generate --force
@@ -150,10 +150,19 @@ php artisan view:cache
 # 7. Konfigurasi Nginx Web Server pada Port 2282
 echo -e "${YELLOW}[6/8] Mengonfigurasi Nginx untuk Port ${WEB_PORT}...${NC}"
 
+# Mulai dan aktifkan PHP-FPM
+systemctl restart php8.4-fpm 2>/dev/null || systemctl restart php8.2-fpm 2>/dev/null || true
+systemctl enable php8.4-fpm 2>/dev/null || systemctl enable php8.2-fpm 2>/dev/null || true
+
 # Temukan PHP-FPM socket yang aktif
-PHP_FPM_SOCK=$(ls /var/run/php/php*-fpm.sock 2>/dev/null | head -n 1)
-if [ -z "$PHP_FPM_SOCK" ]; then
+if [ -e /var/run/php/php8.4-fpm.sock ]; then
+    PHP_FPM_SOCK="/var/run/php/php8.4-fpm.sock"
+elif [ -e /var/run/php/php8.3-fpm.sock ]; then
+    PHP_FPM_SOCK="/var/run/php/php8.3-fpm.sock"
+elif [ -e /var/run/php/php8.2-fpm.sock ]; then
     PHP_FPM_SOCK="/var/run/php/php8.2-fpm.sock"
+else
+    PHP_FPM_SOCK=$(ls /var/run/php/php*-fpm.sock 2>/dev/null | head -n 1)
 fi
 
 cat <<EOF > /etc/nginx/sites-available/sipena-genbi
