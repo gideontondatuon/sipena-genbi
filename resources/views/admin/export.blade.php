@@ -32,7 +32,7 @@
                     </select>
                 </div>
 
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 flex-column flex-sm-row">
                     <button type="submit" formaction="{{ route('admin.preview-rekap') }}" formmethod="GET" class="btn btn-outline-primary rounded-4 w-100"><i class="bi bi-eye me-1"></i> Preview / Cetak PDF</button>
                     <button type="submit" formaction="{{ route('admin.export.xlsx') }}" formmethod="GET" class="btn btn-success rounded-4 w-100"><i class="bi bi-file-earmark-excel me-1"></i> Download Excel (.xlsx)</button>
                 </div>

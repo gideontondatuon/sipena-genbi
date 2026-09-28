@@ -52,13 +52,20 @@ class NotifikasiController extends Controller
 
     public function destroy($id)
     {
-        $userId = auth()->id();
+        $user = auth()->user();
 
-        Notifikasi::where('user_id', $userId)
-            ->where('id', $id)
-            ->delete();
+        $query = Notifikasi::where('id', $id);
+        if (!$user->isAdmin()) {
+            $query->where('user_id', $user->id);
+        }
 
-        return redirect()->back()->with('success', 'Notifikasi berhasil dihapus.');
+        $deleted = $query->delete();
+
+        if ($deleted) {
+            return redirect()->back()->with('success', 'Notifikasi berhasil dihapus.');
+        }
+
+        return redirect()->back()->with('error', 'Notifikasi tidak dapat dihapus.');
     }
 
     public function clearAll()

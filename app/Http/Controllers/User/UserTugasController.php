@@ -14,6 +14,7 @@ class UserTugasController extends Controller
         $userId = auth()->id();
 
         $reportMap = Laporan::where('user_id', $userId)
+            ->where('status', '!=', 'ditolak')
             ->selectRaw('akun_instagram_id, DATE(tanggal_postingan) as tgl, COUNT(*) as total')
             ->groupBy('akun_instagram_id', 'tgl')
             ->get()

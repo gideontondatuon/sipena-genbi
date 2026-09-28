@@ -14,15 +14,21 @@ class AdminValidasiController extends Controller
     {
         $query = Laporan::with(['user', 'akunInstagram']);
 
-        if ($request->filled('status')) {
-            $statusMap = [
-                'Menunggu Validasi' => 'menunggu',
-                'Valid' => 'valid',
-                'Ditolak' => 'ditolak',
-                'Perlu Perbaikan' => 'perlu_perbaikan',
-            ];
-            if (isset($statusMap[$request->status])) {
-                $query->where('status', $statusMap[$request->status]);
+        if ($request->has('status')) {
+            if ($request->status !== 'Semua Status' && !empty($request->status)) {
+                $statusMap = [
+                    'Menunggu Validasi' => 'menunggu',
+                    'Valid' => 'valid',
+                    'Ditolak' => 'ditolak',
+                    'Perlu Perbaikan' => 'perlu_perbaikan',
+                    'menunggu' => 'menunggu',
+                    'valid' => 'valid',
+                    'ditolak' => 'ditolak',
+                    'perlu_perbaikan' => 'perlu_perbaikan',
+                ];
+                if (isset($statusMap[$request->status])) {
+                    $query->where('status', $statusMap[$request->status]);
+                }
             }
         } else {
             // Default show pending validation first

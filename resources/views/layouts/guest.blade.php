@@ -7,6 +7,10 @@
 
     <title>Masuk - SIPENA GenBI (Generasi Baru Indonesia)</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/genbi-polimdo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/genbi-polimdo.png') }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -137,13 +141,14 @@
 
         @media (max-width: 767.98px) {
             .auth-wrapper {
-                padding: 1.75rem 1rem;
+                padding: 1.25rem 0.65rem;
             }
             .auth-card-container {
-                max-width: 395px !important;
+                max-width: 100% !important;
+                width: 100% !important;
             }
             .auth-card {
-                border-radius: 24px !important;
+                border-radius: 20px !important;
             }
         }
     </style>
@@ -160,10 +165,8 @@
                     <div class="col-md-5 brand-section p-4 p-lg-5 d-none d-md-flex flex-column justify-content-between">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-4">
-                                <div class="bg-white px-3 py-2 rounded-3 shadow-sm d-inline-flex align-items-center justify-content-center gap-2">
-                                    <img src="{{ asset('images/genbi-logo.png') }}" alt="Logo GenBI" style="height: 38px; width: auto; object-fit: contain;">
-                                    <div style="height: 24px; width: 1px; background-color: #CBD5E1;"></div>
-                                    <img src="{{ asset('images/genbi-polimdo.png') }}" alt="Logo GenBI Polimdo" style="height: 38px; width: 38px; object-fit: contain;">
+                                <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center" style="padding: 5px; width: 52px; height: 52px;">
+                                    <img src="{{ asset('images/genbi-polimdo.png') }}" alt="Logo GenBI Polimdo" style="height: 42px; width: 42px; object-fit: contain; border-radius: 50%;">
                                 </div>
                                 <div class="d-flex flex-column ms-1">
                                     <span class="fs-4 fw-extrabold text-white lh-1">SIPENA <span class="text-danger">GenBI</span></span>
@@ -186,7 +189,7 @@
                     </div>
 
                     <!-- Right Form Section -->
-                    <div class="col-12 col-md-7 p-4 p-sm-4 p-lg-5 d-flex flex-column justify-content-center">
+                    <div class="col-12 col-md-7 p-3 p-sm-4 p-lg-5 d-flex flex-column justify-content-center">
                         {{ $slot }}
                     </div>
                 </div>

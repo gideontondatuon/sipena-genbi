@@ -192,20 +192,98 @@
 
         @media (max-width: 575.98px) {
             .hero-section {
-                padding: 4rem 0 4.5rem;
-                border-bottom-left-radius: 30px;
-                border-bottom-right-radius: 30px;
+                padding: 4.8rem 0 3.75rem !important;
+                border-bottom-left-radius: 28px !important;
+                border-bottom-right-radius: 28px !important;
+            }
+            .hero-title {
+                font-size: 1.55rem !important;
+                line-height: 1.25 !important;
+                margin-bottom: 0.65rem !important;
+            }
+            .hero-lead {
+                font-size: 0.8rem !important;
+                line-height: 1.5 !important;
+                margin-bottom: 1.25rem !important;
+                padding: 0 0.5rem;
+            }
+            .hero-badge-top {
+                font-size: 0.72rem !important;
+                padding: 0.35rem 0.75rem !important;
+                max-width: 95%;
+                white-space: normal;
+                line-height: 1.3;
+                margin-bottom: 0.75rem !important;
+            }
+            .navbar-logo-glass {
+                padding: 4px 8px !important;
+                border-radius: 10px !important;
+                gap: 5px !important;
+            }
+            .navbar-logo-glass img:first-child {
+                height: 22px !important;
+            }
+            .navbar-logo-glass img:last-child {
+                height: 22px !important;
+                width: 22px !important;
+            }
+            .navbar-logo-glass div {
+                height: 14px !important;
+            }
+            .navbar-brand-title {
+                font-size: 1.05rem !important;
+            }
+            .navbar-brand-subtitle-mobile {
+                font-size: 0.58rem !important;
+                white-space: nowrap !important;
             }
             .stats-floating-bar {
-                margin-top: -2.5rem;
-                padding: 1rem;
+                margin-top: -2.25rem !important;
+                padding: 0.75rem 0.4rem !important;
+                border-radius: 16px !important;
             }
             .stat-item-number {
-                font-size: 1.4rem;
+                font-size: 1.05rem !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 3px !important;
+            }
+            .stat-item-number i {
+                font-size: 0.95rem !important;
+            }
+            .stat-item-label {
+                font-size: 0.64rem !important;
+                line-height: 1.2 !important;
+                margin-top: 2px !important;
+            }
+            .hero-btn-group {
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 290px !important;
+                margin: 0 auto !important;
+                gap: 10px !important;
+            }
+            .hero-btn-group .btn {
+                width: 100% !important;
+                font-size: 0.925rem !important;
+                padding: 0.75rem 1.25rem !important;
+                border-radius: 12px !important;
             }
             .user-welcome-card {
-                padding: 1.25rem;
-                border-radius: 18px;
+                padding: 1.15rem 1rem !important;
+                border-radius: 18px !important;
+            }
+            .feature-card {
+                padding: 1.35rem 1rem !important;
+                border-radius: 18px !important;
+            }
+            .icon-box-feature {
+                width: 48px !important;
+                height: 48px !important;
+                font-size: 1.35rem !important;
+                border-radius: 14px !important;
+                margin-bottom: 0.75rem !important;
             }
         }
     </style>
@@ -221,9 +299,10 @@
                     <div style="height: 20px; width: 1.5px; background-color: #CBD5E1;"></div>
                     <img src="{{ asset('images/genbi-polimdo.png') }}" alt="Logo GenBI Polimdo" style="height: 32px; width: 32px; object-fit: contain;">
                 </div>
-                <div class="d-flex flex-column ms-2 text-start">
-                    <span class="fs-4 fw-extrabold text-white lh-1">SIPENA <span class="text-danger">GenBI</span></span>
-                    <span class="text-white-50 mt-1" style="font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2px;">Sistem Pelaporan Engagement Instagram</span>
+                <div class="d-flex flex-column ms-1 ms-sm-2 text-start">
+                    <span class="fs-4 fw-extrabold text-white lh-1 navbar-brand-title">SIPENA <span class="text-danger">GenBI</span></span>
+                    <span class="text-white-50 mt-1 d-none d-sm-block" style="font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2px;">Sistem Pelaporan Engagement Instagram</span>
+                    <span class="text-white-50 mt-0.5 d-sm-none navbar-brand-subtitle-mobile">Sistem Pelaporan Instagram</span>
                 </div>
             </a>
         </div>
@@ -232,21 +311,21 @@
     <!-- Hero Section Container -->
     <section class="hero-section text-center">
         <div class="hero-bg-glow"></div>
-        <div class="container pt-5 hero-content">
+        <div class="container pt-4 pt-sm-5 hero-content">
             <div class="row justify-content-center">
                 <div class="col-lg-9">
                     <!-- Badge Top -->
-                    <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-20 px-3.5 py-2 rounded-pill fw-bold mb-3 shadow-sm d-inline-flex align-items-center gap-1.5" style="font-size: 0.85rem;">
+                    <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-20 px-3.5 py-2 rounded-pill fw-bold mb-3 shadow-sm d-inline-flex align-items-center gap-1.5 hero-badge-top">
                         <i class="bi bi-award-fill text-warning"></i> Generasi Baru Indonesia · Komisariat Polimdo
                     </span>
 
                     <!-- Main Title -->
-                    <h1 class="display-4 fw-extrabold mb-3 text-white lh-sm">
+                    <h1 class="display-4 fw-extrabold mb-3 text-white lh-sm hero-title">
                         Sistem Penilaian & Pelaporan <span class="text-danger">Engagement</span> Instagram
                     </h1>
 
                     <!-- Lead Paragraph -->
-                    <p class="lead text-white-50 mb-4 mx-auto fs-6" style="max-width: 720px; line-height: 1.6;">
+                    <p class="lead text-white-50 mb-4 mx-auto fs-6 hero-lead" style="max-width: 720px; line-height: 1.6;">
                         Platform digital resmi terpusat untuk memantau, memvalidasi, dan merekapitulasi kelengkapan laporan kegiatan sosialisasi Instagram seluruh anggota GenBI Polimdo.
                     </p>
 
@@ -272,7 +351,7 @@
                         </div>
                     @else
                         <!-- If Guest: Centered Login & Register Action Buttons -->
-                        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-2">
+                        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-2 hero-btn-group">
                             <a href="{{ route('login') }}" class="btn btn-genbi-red fs-5 px-4 py-3 shadow-lg">
                                 <i class="bi bi-shield-lock-fill me-2"></i> Masuk ke Sistem
                             </a>
@@ -290,18 +369,27 @@
     <!-- Stats Bar Banner -->
     <div class="container">
         <div class="stats-floating-bar">
-            <div class="row text-center g-3">
+            <div class="row text-center g-2 g-sm-3">
                 <div class="col-4 border-end">
                     <div class="stat-item-number"><i class="bi bi-people-fill text-primary me-1"></i> 100+</div>
-                    <div class="stat-item-label">Anggota GenBI Polimdo</div>
+                    <div class="stat-item-label">
+                        <span class="d-none d-sm-inline">Anggota GenBI Polimdo</span>
+                        <span class="d-sm-none">Anggota</span>
+                    </div>
                 </div>
                 <div class="col-4 border-end">
                     <div class="stat-item-number text-danger"><i class="bi bi-instagram me-1"></i> Target</div>
-                    <div class="stat-item-label">Posting Harian</div>
+                    <div class="stat-item-label">
+                        <span class="d-none d-sm-inline">Posting Harian</span>
+                        <span class="d-sm-none">Target Harian</span>
+                    </div>
                 </div>
                 <div class="col-4">
                     <div class="stat-item-number text-success"><i class="bi bi-check-circle-fill me-1"></i> 100%</div>
-                    <div class="stat-item-label">Rekap Otomatis</div>
+                    <div class="stat-item-label">
+                        <span class="d-none d-sm-inline">Rekap Otomatis</span>
+                        <span class="d-sm-none">Rekap Valid</span>
+                    </div>
                 </div>
             </div>
         </div>

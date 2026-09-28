@@ -66,6 +66,7 @@
                 <option value="Valid" {{ request('status') === 'Valid' ? 'selected' : '' }}>Valid</option>
                 <option value="Ditolak" {{ request('status') === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                 <option value="Perlu Perbaikan" {{ request('status') === 'Perlu Perbaikan' ? 'selected' : '' }}>Perlu Perbaikan</option>
+                <option value="Semua Status" {{ request('status') === 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
             </select>
         </div>
 

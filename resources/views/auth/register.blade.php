@@ -75,10 +75,8 @@
     <div class="mb-4 text-center text-md-start">
         <!-- Logo Branding Mobile Only -->
         <div class="d-md-none text-center mb-3">
-            <div class="bg-white px-3 py-2 rounded-3 shadow-sm d-inline-flex align-items-center justify-content-center gap-2 mb-2 border">
-                <img src="{{ asset('images/genbi-logo.png') }}" alt="Logo GenBI" style="height: 30px; width: auto; object-fit: contain;">
-                <div style="height: 18px; width: 1px; background-color: #CBD5E1;"></div>
-                <img src="{{ asset('images/genbi-polimdo.png') }}" alt="Logo GenBI Polimdo" style="height: 30px; width: 30px; object-fit: contain;">
+            <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center mb-2" style="padding: 5px; width: 52px; height: 52px;">
+                <img src="{{ asset('images/genbi-polimdo.png') }}" alt="Logo GenBI Polimdo" style="height: 42px; width: 42px; object-fit: contain; border-radius: 50%;">
             </div>
             <div class="fw-extrabold text-dark fs-5">SIPENA <span class="text-danger">GenBI</span></div>
         </div>
@@ -108,6 +106,29 @@
                        autocomplete="name">
             </div>
             @error('name')
+                <div class="text-danger small mt-1">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> {{ $message }}
+                </div>
+            @enderror
+        </div>
+
+        <!-- Username -->
+        <div class="mb-3">
+            <label for="username" class="form-label fw-bold text-dark small mb-1.5">Username</label>
+            <div class="input-group auth-input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-at fs-5"></i>
+                </span>
+                <input id="username" 
+                       type="text" 
+                       name="username" 
+                       value="{{ old('username') }}" 
+                       class="form-control @error('username') is-invalid @enderror" 
+                       placeholder="buat username unik (contoh: gideon123)..." 
+                       required 
+                       autocomplete="username">
+            </div>
+            @error('username')
                 <div class="text-danger small mt-1">
                     <i class="bi bi-exclamation-circle-fill me-1"></i> {{ $message }}
                 </div>

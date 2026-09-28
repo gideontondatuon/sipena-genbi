@@ -30,7 +30,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('user.dashboard');
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Notifikasi Routes
 Route::middleware('auth')->group(function () {
@@ -90,7 +90,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // User (Anggota) Routes
-Route::middleware(['auth', 'anggota'])->prefix('user')->name('user.')->group(function () {
+Route::middleware(['auth', 'verified', 'anggota'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/tugas', [UserTugasController::class, 'index'])->name('tugas.index');
     Route::get('/tambah-laporan', [UserLaporanController::class, 'create'])->name('laporan.create');

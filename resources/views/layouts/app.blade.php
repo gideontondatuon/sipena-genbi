@@ -7,6 +7,10 @@
 
     <title>@yield('title', 'SIPENA GenBI') - Generasi Baru Indonesia</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/genbi-polimdo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/genbi-polimdo.png') }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,31 +134,27 @@
 
         .navbar-logo-container {
             background: #FFFFFF;
-            padding: 4px 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            padding: 5px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.18);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
         }
 
         .navbar-logo-img {
-            height: 32px;
-            width: auto;
-            object-fit: contain;
+            display: none;
         }
 
         .navbar-logo-polimdo {
-            height: 32px;
-            width: 32px;
+            height: 38px;
+            width: 38px;
             object-fit: contain;
+            border-radius: 50%;
         }
 
         .logo-divider {
-            height: 20px;
-            width: 1px;
-            background-color: #CBD5E1;
+            display: none;
         }
 
         .navbar-genbi .nav-link {
@@ -178,6 +178,11 @@
             overflow-x: auto;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .subnav::-webkit-scrollbar {
+            display: none;
         }
 
         .subnav .nav-link {
@@ -326,40 +331,53 @@
         }
 
         @media (max-width: 767.98px) {
+            main.container-fluid {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            .page-header-title {
+                font-size: 1.25rem !important;
+            }
+            .page-header-subtitle {
+                font-size: 0.75rem !important;
+            }
+            .table-responsive {
+                -webkit-overflow-scrolling: touch;
+                border-radius: 12px;
+                overflow-x: auto;
+            }
+            .table-responsive table {
+                min-width: 580px;
+            }
             .navbar-logo-container {
-                padding: 3px 6px;
-                border-radius: 8px;
+                padding: 4px;
+                border-radius: 50%;
             }
             .navbar-logo-img {
-                height: 24px;
+                display: none;
             }
             .navbar-logo-polimdo {
-                height: 24px;
-                width: 24px;
+                height: 28px;
+                width: 28px;
             }
             .logo-divider {
-                height: 16px;
+                display: none;
             }
             .navbar-brand-title {
-                font-size: 1.15rem !important;
+                font-size: 1.1rem !important;
             }
             .navbar-brand-subtitle {
                 display: none !important;
             }
-            .navbar-toggler-custom {
-                background: rgba(255, 255, 255, 0.15) !important;
-                border: 1px solid rgba(255, 255, 255, 0.25) !important;
-                border-radius: 10px !important;
-                padding: 4px 10px !important;
-                color: #FFFFFF !important;
-            }
             .content-card {
-                padding: 1.1rem;
-                border-radius: 14px;
+                padding: 1rem 0.85rem !important;
+                border-radius: 16px !important;
+                margin-bottom: 1rem !important;
             }
             .subnav .nav-link {
-                padding: 0.65rem 0.9rem;
-                font-size: 0.825rem;
+                padding: 0.65rem 0.85rem;
+                font-size: 0.8rem;
+                flex-shrink: 0;
             }
             .nav-pill-item {
                 padding: 3px 8px !important;
@@ -377,6 +395,12 @@
                 font-size: 0.72rem !important;
                 border-width: 1.5px !important;
             }
+            .modal-dialog {
+                margin: 0.75rem !important;
+            }
+            .modal-content {
+                border-radius: 18px !important;
+            }
         }
 
         .notif-dropdown-menu {
@@ -386,29 +410,47 @@
 
         @media (max-width: 575.98px) {
             .stat-card {
-                padding: 1rem;
-                border-radius: 12px;
+                padding: 0.85rem 0.75rem !important;
+                border-radius: 14px !important;
             }
             .stat-card .stat-number {
-                font-size: 1.5rem;
+                font-size: 1.35rem !important;
+            }
+            .stat-card .stat-label {
+                font-size: 0.68rem !important;
+                letter-spacing: 0.2px !important;
+            }
+            .stat-card small {
+                font-size: 0.68rem !important;
             }
             .stat-card .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            .table > :not(caption) > * > * {
+                padding: 0.65rem 0.65rem;
+                font-size: 0.825rem;
+            }
+            .mobile-clock-strip {
+                font-size: 0.72rem !important;
+                padding: 4px 8px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
             .notif-dropdown-menu {
                 position: fixed !important;
                 top: 50px !important;
-                left: 12px !important;
-                right: 12px !important;
-                width: calc(100vw - 24px) !important;
+                left: 10px !important;
+                right: 10px !important;
+                width: calc(100vw - 20px) !important;
                 min-width: 0 !important;
                 max-width: none !important;
                 margin: 0 auto !important;
                 transform: none !important;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-                z-index: 1060 !important;
+                z-index: 1070 !important;
             }
             .btn-responsive-mobile {
                 width: 100%;
@@ -625,6 +667,9 @@
                 <a class="nav-link {{ request()->routeIs('admin.anggota.*') ? 'active' : '' }}" href="{{ route('admin.anggota.index') }}">
                     <i class="bi bi-people-fill me-1"></i> Data Anggota
                 </a>
+                <a class="nav-link {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}" href="{{ route('admin.periode.index') }}">
+                    <i class="bi bi-calendar-range-fill me-1"></i> Periode
+                </a>
                 <a class="nav-link {{ request()->routeIs('admin.target-harian.*') ? 'active' : '' }}" href="{{ route('admin.target-harian.index') }}">
                     <i class="bi bi-bullseye me-1"></i> Target Harian
                 </a>
@@ -638,6 +683,12 @@
                     <i class="bi bi-file-earmark-arrow-down-fill me-1"></i> Export & Preview
                 </a>
             @else
+                <a class="nav-link {{ request()->routeIs('user.dashboard') ? 'active' : '' }}" href="{{ route('user.dashboard') }}">
+                    <i class="bi bi-grid-fill me-1"></i> Dashboard
+                </a>
+                <a class="nav-link {{ request()->routeIs('user.tugas.*') ? 'active' : '' }}" href="{{ route('user.tugas.index') }}">
+                    <i class="bi bi-card-checklist me-1"></i> Tugas Harian
+                </a>
                 <a class="nav-link {{ request()->routeIs('user.laporan.create') ? 'active' : '' }}" href="{{ route('user.laporan.create') }}">
                     <i class="bi bi-plus-circle-fill me-1"></i> + Upload Laporan Baru
                 </a>
@@ -650,9 +701,6 @@
                 <a class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                     <i class="bi bi-person-circle me-1"></i> Profil Saya
                 </a>
-                <a class="nav-link {{ request()->routeIs('user.dashboard') ? 'active' : '' }}" href="{{ route('user.dashboard') }}">
-                    <i class="bi bi-grid-fill me-1"></i> Ringkasan
-                </a>
             @endif
         </div>
     </div>
@@ -661,10 +709,10 @@
     <main class="container-fluid px-lg-4 pb-5">
         
         <!-- Page Title Header -->
-        <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2 no-print">
+        <div class="mb-3 mb-md-4 d-flex justify-content-between align-items-center flex-wrap gap-2 no-print">
             <div>
-                <h4 class="fw-bold mb-1" style="color: var(--genbi-blue);">@yield('title')</h4>
-                <p class="text-muted mb-0 small">@yield('subtitle')</p>
+                <h4 class="fw-bold mb-1 page-header-title" style="color: var(--genbi-blue);">@yield('title')</h4>
+                <p class="text-muted mb-0 small page-header-subtitle">@yield('subtitle')</p>
             </div>
             @yield('header_actions')
         </div>

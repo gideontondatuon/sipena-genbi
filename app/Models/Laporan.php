@@ -4,10 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Laporan extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Laporan $laporan) {
+            if ($laporan->bukti_like) {
+                Storage::disk('public')->delete($laporan->bukti_like);
+            }
+            if ($laporan->bukti_komen) {
+                Storage::disk('public')->delete($laporan->bukti_komen);
+            }
+            if ($laporan->bukti_share) {
+                Storage::disk('public')->delete($laporan->bukti_share);
+            }
+        });
+    }
 
     protected $fillable = [
         'user_id',

@@ -15,7 +15,7 @@
 
     <form method="GET" action="{{ route('admin.anggota.index') }}" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Cari nama atau email..." value="{{ request('search') }}">
+            <input type="text" name="search" class="form-control" placeholder="Cari nama, username, atau email..." value="{{ request('search') }}">
         </div>
         <div class="col-md-3">
             <select name="status" class="form-select" onchange="this.form.submit()">
@@ -33,7 +33,7 @@
         <table class="table align-middle">
             <thead>
                 <tr>
-                    <th>Nama</th>
+                    <th>Nama & Username</th>
                     <th>Email / NIM</th>
                     <th>Role</th>
                     <th>Status</th>
@@ -44,7 +44,12 @@
             <tbody>
                 @forelse($anggotaList as $user)
                     <tr>
-                        <td class="fw-semibold">{{ $user->name }}</td>
+                        <td class="fw-semibold">
+                            <div>{{ $user->name }}</div>
+                            @if($user->username)
+                                <small class="text-primary fw-medium"><i class="bi bi-at"></i>{{ $user->username }}</small>
+                            @endif
+                        </td>
                         <td>
                             <div>{{ $user->email }}</div>
                             @if($user->nim)<small class="text-muted">NIM: {{ $user->nim }}</small>@endif
@@ -99,6 +104,10 @@
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Nama Lengkap</label>
                                             <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Username</label>
+                                            <input type="text" name="username" class="form-control" value="{{ $user->username }}" required>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Email</label>
@@ -163,6 +172,10 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Lengkap</label>
                         <input type="text" name="name" class="form-control" placeholder="Nama anggota" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username <small class="text-muted fw-normal">(Opsional, otomatis dari email jika kosong)</small></label>
+                        <input type="text" name="username" class="form-control" placeholder="contoh: anggota123">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Email</label>

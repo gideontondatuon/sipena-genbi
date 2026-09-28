@@ -26,17 +26,19 @@ class AdminRekapController extends Controller
             $q->whereBetween('tanggal_postingan', [$tanggalMulai, $tanggalSelesai]);
         }]);
 
-        $totalTarget = TargetHarian::sum('jumlah_target');
-        if ($totalTarget == 0) $totalTarget = 1;
+        $totalTarget = (int) TargetHarian::whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai])->sum('jumlah_target');
 
         $members = $query->get()->map(function($user) use ($totalTarget) {
             $userLaporans = $user->laporans;
-            $uploaded = $userLaporans->count();
+            $uploaded = $userLaporans->where('status', '!=', 'ditolak')->count();
             $valid = $userLaporans->where('status', 'valid')->count();
             $ditolak = $userLaporans->where('status', 'ditolak')->count();
             $kurang = max(0, $totalTarget - $uploaded);
 
-            if ($uploaded == 0) {
+            if ($totalTarget == 0) {
+                $status = $uploaded > 0 ? 'Lengkap' : 'Belum Upload';
+                $badgeClass = $uploaded > 0 ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary';
+            } elseif ($uploaded == 0) {
                 $status = 'Belum Upload';
                 $badgeClass = 'bg-danger-subtle text-danger';
             } elseif ($uploaded < $totalTarget) {

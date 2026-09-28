@@ -24,6 +24,7 @@
                     <th>Akun Instagram</th>
                     <th>Tanggal Postingan</th>
                     <th>Bukti Screenshot</th>
+                    <th>Status</th>
                     <th class="d-none d-md-table-cell">Diupload Pada</th>
                     <th>Aksi</th>
                 </tr>
@@ -33,7 +34,10 @@
                     <tr>
                         <td class="d-none d-sm-table-cell">{{ $index + 1 }}</td>
                         <td class="fw-semibold">
-                            <i class="bi bi-instagram text-primary me-1"></i> {{ $item->akunInstagram->nama_akun ?? '-' }}
+                            <div><i class="bi bi-instagram text-primary me-1"></i> {{ $item->akunInstagram->nama_akun ?? '-' }}</div>
+                            @if($item->judul_postingan)
+                                <small class="text-muted d-block fw-normal mt-0.5"><i class="bi bi-file-text me-1 text-primary"></i>{{ $item->judul_postingan }}</small>
+                            @endif
                         </td>
                         <td><span class="badge bg-primary-subtle text-primary fw-bold px-2.5 py-1.5" style="font-size: 0.75rem;">{{ $item->tanggal_postingan->format('d M Y') }}</span></td>
                         <td>
@@ -42,6 +46,31 @@
                                 @if($item->bukti_komen)<span class="badge bg-info-subtle text-info">Komen</span>@endif
                                 @if($item->bukti_share)<span class="badge bg-primary-subtle text-primary">Share</span>@endif
                             </div>
+                        </td>
+                        <td>
+                            @if($item->status === 'valid')
+                                <span class="badge bg-success-subtle text-success rounded-pill px-2.5 py-1">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Valid
+                                </span>
+                            @elseif($item->status === 'ditolak')
+                                <span class="badge bg-danger-subtle text-danger rounded-pill px-2.5 py-1" title="{{ $item->catatan_admin ?? 'Ditolak' }}">
+                                    <i class="bi bi-x-circle-fill me-1"></i> Ditolak
+                                </span>
+                                @if($item->catatan_admin)
+                                    <small class="d-block text-danger mt-1" style="font-size: 0.72rem;"><i class="bi bi-chat-left-quote me-1"></i>{{ Str::limit($item->catatan_admin, 35) }}</small>
+                                @endif
+                            @elseif($item->status === 'perlu_perbaikan')
+                                <span class="badge bg-warning-subtle text-warning rounded-pill px-2.5 py-1" title="{{ $item->catatan_admin ?? 'Perlu Perbaikan' }}">
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i> Perlu Perbaikan
+                                </span>
+                                @if($item->catatan_admin)
+                                    <small class="d-block text-warning-emphasis mt-1" style="font-size: 0.72rem;"><i class="bi bi-chat-left-quote me-1"></i>{{ Str::limit($item->catatan_admin, 35) }}</small>
+                                @endif
+                            @else
+                                <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1">
+                                    <i class="bi bi-hourglass-split me-1"></i> Menunggu Validasi
+                                </span>
+                            @endif
                         </td>
                         <td class="d-none d-md-table-cell"><small class="text-muted">{{ $item->created_at->format('d M Y, H:i') }}</small></td>
                         <td>
@@ -57,7 +86,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">Belum ada riwayat pengunggahan laporan postingan.</td>
+                        <td colspan="7" class="text-center py-4 text-muted">Belum ada riwayat pengunggahan laporan postingan.</td>
                     </tr>
                 @endforelse
             </tbody>

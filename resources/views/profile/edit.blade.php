@@ -278,6 +278,37 @@
             padding: 1rem 1.25rem 0.75rem;
         }
     }
+
+    @media (max-width: 575.98px) {
+        .profile-hero {
+            padding: 1.2rem 1rem;
+            border-radius: 16px;
+        }
+        .profile-avatar {
+            width: 52px;
+            height: 52px;
+            font-size: 1.35rem;
+        }
+        .profile-hero-name {
+            font-size: 1.15rem;
+        }
+        .profile-hero-meta {
+            font-size: 0.75rem;
+        }
+        .profile-card {
+            border-radius: 16px;
+        }
+        .profile-card-body {
+            padding: 1rem 0.85rem;
+        }
+        .profile-card-header {
+            padding: 0.85rem 1rem;
+        }
+        .btn-save, .btn-password {
+            width: 100% !important;
+            padding: 0.65rem 1rem;
+        }
+    }
 </style>
 
 <div class="row justify-content-center">
@@ -319,6 +350,11 @@
                         @if(auth()->user()->nim)
                             <div class="profile-hero-meta">
                                 <i class="bi bi-person-badge-fill me-1 opacity-75"></i>NIM: {{ auth()->user()->nim }}
+                            </div>
+                        @endif
+                        @if(auth()->user()->phone)
+                            <div class="profile-hero-meta">
+                                <i class="bi bi-telephone-fill me-1 opacity-75"></i>WA/HP: {{ auth()->user()->phone }}
                             </div>
                         @endif
                         <span class="profile-hero-badge">
@@ -376,6 +412,19 @@
                                 value="{{ old('nim', $user->nim) }}" placeholder="Contoh: 21021101">
                         </div>
                         @error('nim')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label-premium">Nomor WhatsApp / HP</label>
+                        <div class="input-icon-group">
+                            <i class="bi bi-telephone-fill input-icon"></i>
+                            <input type="tel" id="phone" name="phone"
+                                class="form-control form-control-premium @error('phone') is-invalid @enderror"
+                                value="{{ old('phone', $user->phone) }}" placeholder="Contoh: 081234567890">
+                        </div>
+                        @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

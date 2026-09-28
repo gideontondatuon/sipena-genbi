@@ -56,11 +56,13 @@
                                     @endif
                                 </a>
 
-                                <form action="{{ route('notifikasi.destroy', $notif->id) }}" method="POST" onsubmit="return confirm('Hapus notifikasi ini?')" class="m-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-link text-danger p-0 border-0 fs-6" title="Hapus Notifikasi"><i class="bi bi-trash"></i></button>
-                                </form>
+                                @if($notif->user_id !== null || auth()->user()->isAdmin())
+                                    <form action="{{ route('notifikasi.destroy', $notif->id) }}" method="POST" onsubmit="return confirm('Hapus notifikasi ini?')" class="m-0">
+                                         @csrf
+                                         @method('DELETE')
+                                         <button type="submit" class="btn btn-link text-danger p-0 border-0 fs-6" title="Hapus Notifikasi"><i class="bi bi-trash"></i></button>
+                                     </form>
+                                 @endif
                             </div>
 
                             <a href="{{ route('notifikasi.open', $notif->id) }}" class="text-decoration-none text-muted d-block small mt-1">

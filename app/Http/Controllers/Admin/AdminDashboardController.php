@@ -18,11 +18,12 @@ class AdminDashboardController extends Controller
         $menungguValidasi = Laporan::where('status', 'menunggu')->count();
         $ditolak = Laporan::where('status', 'ditolak')->count();
 
-        // Calculate completeness
-        $anggotaList = User::where('role', 'anggota')->get();
+        // Calculate completeness (berdasarkan anggota aktif)
+        $anggotaList = User::where('role', 'anggota')->where('status', 'aktif')->get();
         $totalTarget = TargetHarian::sum('jumlah_target');
         
-        $uploadCounts = Laporan::selectRaw('user_id, count(*) as total')
+        $uploadCounts = Laporan::where('status', '!=', 'ditolak')
+            ->selectRaw('user_id, count(*) as total')
             ->groupBy('user_id')
             ->pluck('total', 'user_id');
 

@@ -24,13 +24,19 @@ class UserLaporanController extends Controller
         $validated = $request->validate([
             'akun_instagram_id' => 'required|exists:akun_instagrams,id',
             'tanggal_postingan' => 'required|date',
-            'link_postingan' => 'nullable|url|max:500',
+            'topik_postingan' => 'nullable|string|max:255',
             'judul_postingan' => 'nullable|string|max:255',
+            'link_postingan' => 'nullable|url|max:500',
             'bukti_like' => 'nullable|image|max:5120',
             'bukti_komen' => 'nullable|image|max:5120',
             'bukti_share' => 'nullable|image|max:5120',
             'keterangan' => 'nullable|string',
         ]);
+
+        // Pastikan minimal salah satu bukti screenshot terunggah
+        if (!$request->hasFile('bukti_like') && !$request->hasFile('bukti_komen') && !$request->hasFile('bukti_share')) {
+            return redirect()->back()->withInput()->with('error', 'Harap unggah minimal satu bukti screenshot (Like, Komen, atau Share).');
+        }
 
         $userId = auth()->id();
         $optimizer = app(\App\Services\ImageOptimizationService::class);
@@ -54,6 +60,17 @@ class UserLaporanController extends Controller
             })->count();
 
             if ($duplicateCount > 0) {
+                // Bersihkan file yang baru dioptimasi agar tidak menjadi file yatim (orphan)
+                if ($likeResult && !empty($likeResult['path'])) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($likeResult['path']);
+                }
+                if ($komenResult && !empty($komenResult['path'])) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($komenResult['path']);
+                }
+                if ($shareResult && !empty($shareResult['path'])) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($shareResult['path']);
+                }
+
                 return redirect()->back()->withInput()->with('error', 'Sistem Deteksi Duplikasi: File screenshot yang Anda unggah terdeteksi sama persis dengan bukti yang pernah diunggah sebelumnya.');
             }
         }
@@ -62,16 +79,25 @@ class UserLaporanController extends Controller
         $namaAkun = $akun ? ($akun->username ? '@'.ltrim($akun->username, '@') : $akun->nama_akun) : 'Instagram';
         $tglFormat = date('d M Y', strtotime($validated['tanggal_postingan']));
 
+        $rawTopik = $validated['topik_postingan'] ?? $validated['judul_postingan'] ?? null;
+        $manualTopik = !empty($rawTopik) ? trim($rawTopik) : null;
+
         $detectedTitle = $this->autoDetectInstagramTitle(
             $validated['link_postingan'] ?? null, 
-            $validated['judul_postingan'] ?? null
+            $manualTopik
         );
 
-        $finalJudul = $detectedTitle ?: "Postingan {$namaAkun} ({$tglFormat})";
+        $finalJudul = $manualTopik ?: ($detectedTitle ?: "Postingan {$namaAkun} ({$tglFormat})");
+
+        // Hubungkan target_harian_id secara otomatis jika target tersedia
+        $targetHarian = \App\Models\TargetHarian::where('akun_instagram_id', $validated['akun_instagram_id'])
+            ->whereDate('tanggal', $validated['tanggal_postingan'])
+            ->first();
 
         Laporan::create([
             'user_id' => $userId,
             'akun_instagram_id' => $validated['akun_instagram_id'],
+            'target_harian_id' => $targetHarian?->id,
             'tanggal_postingan' => $validated['tanggal_postingan'],
             'link_postingan' => $validated['link_postingan'] ?? null,
             'judul_postingan' => $finalJudul,
@@ -82,10 +108,10 @@ class UserLaporanController extends Controller
             'hash_komen' => $komenResult['hash'] ?? null,
             'hash_share' => $shareResult['hash'] ?? null,
             'keterangan' => $validated['keterangan'] ?? null,
-            'status' => 'valid',
+            'status' => 'menunggu',
         ]);
 
-        return redirect()->route('user.preview-laporan')->with('success', 'Laporan postingan berhasil ditambahkan.');
+        return redirect()->route('user.riwayat.index')->with('success', 'Laporan postingan berhasil dikirim dan sedang menunggu validasi admin.');
     }
 
     public function fetchInstagramInfo(Request $request)

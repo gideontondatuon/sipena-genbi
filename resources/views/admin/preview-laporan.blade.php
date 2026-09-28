@@ -334,6 +334,16 @@
             max-height: 360px !important;
         }
 
+        .post-topic-box {
+            background-color: #F8FAFC !important;
+            border: 1px solid #CBD5E1 !important;
+            border-left: 4px solid #002B66 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin-bottom: 0.4rem !important;
+            padding: 0.35rem 0.75rem !important;
+        }
+
         .no-print {
             display: none !important;
         }
@@ -477,19 +487,18 @@
                     </div>
                 </div>
 
-                @if($laporan->judul_postingan || $laporan->link_postingan)
-                    <div class="mb-2 px-3 py-2 bg-light border-start border-3 border-primary rounded-2 small text-dark">
-                        @if($laporan->judul_postingan)
-                            <div><strong><i class="bi bi-file-text me-1 text-primary"></i> Topik Postingan:</strong> {{ $laporan->judul_postingan }}</div>
-                        @endif
-                        @if($laporan->link_postingan)
-                            <div class="mt-1" style="word-break: break-all;">
-                                <strong><i class="bi bi-link-45deg me-1 text-primary"></i> Link Postingan:</strong> 
-                                <a href="{{ $laporan->link_postingan }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">{{ $laporan->link_postingan }}</a>
-                            </div>
-                        @endif
+                <div class="mb-2 px-3 py-2 bg-light border-start border-3 border-primary rounded-2 small text-dark post-topic-box">
+                    <div>
+                        <strong><i class="bi bi-file-text me-1 text-primary"></i> Topik Postingan:</strong> 
+                        <span class="fw-semibold text-dark">{{ $laporan->judul_postingan ?: 'Tidak ada topik dicantumkan' }}</span>
                     </div>
-                @endif
+                    @if($laporan->link_postingan)
+                        <div class="mt-1" style="word-break: break-all;">
+                            <strong><i class="bi bi-link-45deg me-1 text-primary"></i> Link Postingan:</strong> 
+                            <a href="{{ $laporan->link_postingan }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">{{ $laporan->link_postingan }}</a>
+                        </div>
+                    @endif
+                </div>
 
                 <!-- Row 3 Screenshots Berjejer Ke Samping (Like, Komen, Share) -->
                 <div class="screenshot-row">

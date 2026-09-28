@@ -16,7 +16,8 @@ class AdminAnggotaController extends Controller
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('username', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -33,12 +34,24 @@ class AdminAnggotaController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'username' => 'nullable|string|alpha_dash|max:50|unique:users,username',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:admin,anggota',
             'phone' => 'nullable|string',
             'nim' => 'nullable|string',
             'password' => 'required|string|min:6',
         ]);
+
+        if (empty($validated['username'])) {
+            $base = \Illuminate\Support\Str::slug(explode('@', $validated['email'])[0], '_');
+            $username = $base;
+            $counter = 1;
+            while (User::where('username', $username)->exists()) {
+                $username = $base . $counter;
+                $counter++;
+            }
+            $validated['username'] = $username;
+        }
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['status'] = 'aktif';
@@ -52,6 +65,7 @@ class AdminAnggotaController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'username' => 'required|string|alpha_dash|max:50|unique:users,username,' . $user->id,
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:admin,anggota',
             'phone' => 'nullable|string',

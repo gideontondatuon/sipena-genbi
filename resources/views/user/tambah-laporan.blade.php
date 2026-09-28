@@ -14,37 +14,68 @@
                 @csrf
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Akun Instagram</label>
+                        <label class="form-label fw-semibold">Akun Instagram <span class="text-danger">*</span></label>
                         <select name="akun_instagram_id" class="form-select" required>
                             <option value="">Pilih akun Instagram</option>
                             @foreach($akunList as $akun)
-                                <option value="{{ $akun->id }}" {{ isset($selectedAkunId) && $selectedAkunId == $akun->id ? 'selected' : '' }}>
+                                <option value="{{ $akun->id }}" {{ (old('akun_instagram_id') == $akun->id || (isset($selectedAkunId) && $selectedAkunId == $akun->id)) ? 'selected' : '' }}>
                                     {{ $akun->nama_akun }} ({{ $akun->username }})
                                 </option>
                             @endforeach
                         </select>
+                        @error('akun_instagram_id')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Tanggal Postingan</label>
-                        <input type="date" name="tanggal_postingan" class="form-control" value="{{ $selectedTanggal ?? date('Y-m-d') }}" required>
+                        <label class="form-label fw-semibold">Tanggal Postingan <span class="text-danger">*</span></label>
+                        <input type="date" name="tanggal_postingan" class="form-control" value="{{ old('tanggal_postingan', $selectedTanggal ?? date('Y-m-d')) }}" required>
+                        @error('tanggal_postingan')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Link / URL Postingan Instagram (Opsional)</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light text-primary"><i class="bi bi-link-45deg fs-5"></i></span>
-                        <input type="url" name="link_postingan" id="linkPostinganInput" class="form-control" placeholder="Contoh: https://www.instagram.com/p/C3x9abc123/">
-                        <button type="button" class="btn btn-outline-primary" id="btnDetectInfo" onclick="detectInstagramTitle()"><i class="bi bi-magic me-1"></i> Deteksi Judul</button>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-file-earmark-text text-primary me-1"></i> Topik Postingan <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-primary"><i class="bi bi-pen"></i></span>
+                            <input type="text" 
+                                   name="topik_postingan" 
+                                   id="topik_postingan" 
+                                   class="form-control @error('topik_postingan') is-invalid @enderror" 
+                                   placeholder="Contoh: Edukasi CBP Rupiah / Sosialisasi QRIS / Pengumuman Beasiswa BI" 
+                                   value="{{ old('topik_postingan') }}" 
+                                   required>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            <i class="bi bi-info-circle me-1"></i>Topik postingan ini akan dicantumkan secara otomatis pada <strong>format cetak laporan</strong>.
+                        </small>
+                        @error('topik_postingan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <small id="linkDetectStatus" class="text-muted mt-1 d-block">Tempelkan link postingan untuk mendeteksi topik/judul postingan secara otomatis.</small>
-                </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Judul / Kalimat Pertama Postingan Instagram</label>
-                    <input type="text" name="judul_postingan" id="judulPostinganInput" class="form-control" placeholder="Contoh: 🚨 WASPADA HOAKS! 🚨 (Salin kalimat pertama postingan)">
-                    <small class="text-muted mt-1 d-block">Buka postingan Instagram, lalu salin (copy) kalimat pertama atau judul caption di sini agar tercetak di laporan.</small>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-link-45deg text-primary me-1"></i> Link Postingan Instagram <span class="text-muted fw-normal">(Opsional)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-primary"><i class="bi bi-instagram"></i></span>
+                            <input type="url" 
+                                   name="link_postingan" 
+                                   id="link_postingan" 
+                                   class="form-control @error('link_postingan') is-invalid @enderror" 
+                                   placeholder="https://www.instagram.com/p/..." 
+                                   value="{{ old('link_postingan') }}">
+                        </div>
+                        <small class="text-muted d-block mt-1">Tautan URL postingan Instagram (opsional).</small>
+                        @error('link_postingan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="row g-3 mb-4">
@@ -92,49 +123,42 @@
         </div>
     </div>
 </div>
+@endsection
 
 @section('scripts')
 <script>
-    function detectInstagramTitle() {
-        const linkInput = document.getElementById('linkPostinganInput');
-        const link = linkInput ? linkInput.value.trim() : '';
-        const statusEl = document.getElementById('linkDetectStatus');
-        const titleInput = document.getElementById('judulPostinganInput');
+    document.addEventListener('DOMContentLoaded', function () {
+        const linkInput = document.getElementById('link_postingan');
+        const topikInput = document.getElementById('topik_postingan');
 
-        if (!link) {
-            if (statusEl) statusEl.innerHTML = '<span class="text-danger">Masukkan link postingan Instagram terlebih dahulu.</span>';
-            return;
-        }
-
-        if (statusEl) statusEl.innerHTML = '<span class="text-primary"><i class="bi bi-hourglass-split me-1"></i> Mendeteksi informasi postingan...</span>';
-
-        fetch("{{ route('user.laporan.fetch-ig-info') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ link: link })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success && data.title) {
-                if (titleInput) titleInput.value = data.title;
-                if (statusEl) statusEl.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Berhasil mendeteksi topik postingan!</span>';
-            } else {
-                if (statusEl) statusEl.innerHTML = '<span class="text-muted">Gagal mendeteksi otomatis. Silakan ketik topik postingan secara manual.</span>';
-            }
-        })
-        .catch(() => {
-            if (statusEl) statusEl.innerHTML = '<span class="text-muted">Sistem siap. Silakan ketik topik postingan secara manual.</span>';
-        });
-    }
-
-    document.getElementById('linkPostinganInput')?.addEventListener('blur', function() {
-        if (this.value.trim() && !document.getElementById('judulPostinganInput').value.trim()) {
-            detectInstagramTitle();
+        if (linkInput && topikInput) {
+            linkInput.addEventListener('change', function () {
+                const url = this.value.trim();
+                if (url && !topikInput.value.trim()) {
+                    const originalPlaceholder = topikInput.getAttribute('placeholder');
+                    topikInput.setAttribute('placeholder', 'Mencoba membaca topik dari link Instagram...');
+                    
+                    fetch('{{ route("user.laporan.fetch-ig-info") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ link: url })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.title && !topikInput.value.trim()) {
+                            topikInput.value = data.title;
+                        }
+                    })
+                    .catch(() => {})
+                    .finally(() => {
+                        topikInput.setAttribute('placeholder', originalPlaceholder);
+                    });
+                }
+            });
         }
     });
 </script>
-@endsection
 @endsection

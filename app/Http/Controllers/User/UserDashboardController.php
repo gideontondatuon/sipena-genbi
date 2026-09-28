@@ -17,12 +17,13 @@ class UserDashboardController extends Controller
         $totalTarget = TargetHarian::sum('jumlah_target');
         $userLaporans = Laporan::where('user_id', $userId)->get();
 
-        $sudahUpload = $userLaporans->count();
+        $sudahUpload = $userLaporans->where('status', '!=', 'ditolak')->count();
         $laporanValid = $userLaporans->where('status', 'valid')->count();
         $kekurangan = max(0, $totalTarget - $sudahUpload);
 
-        // Pre-fetch report counts grouped by account and date
+        // Pre-fetch report counts grouped by account and date (mengecualikan laporan ditolak)
         $reportMap = Laporan::where('user_id', $userId)
+            ->where('status', '!=', 'ditolak')
             ->selectRaw('akun_instagram_id, DATE(tanggal_postingan) as tgl, COUNT(*) as total')
             ->groupBy('akun_instagram_id', 'tgl')
             ->get()
