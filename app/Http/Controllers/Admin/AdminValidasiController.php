@@ -7,6 +7,7 @@ use App\Models\Laporan;
 use App\Models\AkunInstagram;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminValidasiController extends Controller
 {
@@ -49,7 +50,7 @@ class AdminValidasiController extends Controller
             });
         }
 
-        $laporans = $query->latest()->get();
+        $laporans = $query->latest()->paginate(25)->withQueryString();
         $akunList = AkunInstagram::all();
 
         return view('admin.validasi', compact('laporans', 'akunList'));
@@ -75,10 +76,13 @@ class AdminValidasiController extends Controller
 
         Notifikasi::create([
             'user_id' => $laporan->user_id,
-            'judul' => $judul,
-            'pesan' => $pesan,
-            'tipe' => $request->status === 'valid' ? 'valid' : 'ditolak',
+            'judul'   => $judul,
+            'pesan'   => $pesan,
+            'tipe'    => $request->status === 'valid' ? 'valid' : 'ditolak',
         ]);
+
+        // Kirim notifikasi email ke anggota
+        $this->sendValidasiEmail($laporan->user, $judul, $pesan);
 
         return redirect()->back()->with('success', 'Status laporan berhasil diperbarui.');
     }
@@ -108,10 +112,13 @@ class AdminValidasiController extends Controller
 
             Notifikasi::create([
                 'user_id' => $laporan->user_id,
-                'judul' => $judul,
-                'pesan' => $pesan,
-                'tipe' => $request->status === 'valid' ? 'valid' : 'ditolak',
+                'judul'   => $judul,
+                'pesan'   => $pesan,
+                'tipe'    => $request->status === 'valid' ? 'valid' : 'ditolak',
             ]);
+
+            // Kirim notifikasi email ke anggota
+            $this->sendValidasiEmail($laporan->user, $judul, $pesan);
 
             $count++;
         }
@@ -136,5 +143,31 @@ class AdminValidasiController extends Controller
         $laporan->delete();
 
         return redirect()->back()->with('success', 'Laporan anggota berhasil dihapus permanently dari sistem dan storage.');
+    }
+
+    /**
+     * Kirim email notifikasi validasi ke anggota.
+     */
+    private function sendValidasiEmail($user, string $judul, string $pesan): void
+    {
+        if (!$user || !$user->email) return;
+
+        try {
+            $statusIcon = str_contains($judul, 'divalidasi') ? '✅' : '⚠️';
+            $html = view('vendor.notifications.email', [
+                'greeting'    => "Halo, {$user->name}!",
+                'introLines'  => [$statusIcon . ' ' . $pesan],
+                'actionText'  => null,
+                'actionUrl'   => null,
+                'outroLines'  => ['Silakan login ke sistem SIPENA GenBI untuk melihat detail laporan Anda.'],
+            ])->render();
+
+            Mail::html($html, function($message) use ($user, $judul) {
+                $message->to($user->email, $user->name)
+                        ->subject('[SIPENA GenBI] ' . $judul);
+            });
+        } catch (\Exception $e) {
+            // Silence — email notifikasi tidak boleh menghentikan proses validasi
+        }
     }
 }

@@ -317,17 +317,67 @@
             padding: 0.9rem 1rem;
         }
 
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
         /* Mobile Navbar Responsive Enhancements */
         .mobile-clock-strip {
-            background: rgba(0, 0, 0, 0.25);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.28);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             color: #FFFFFF;
-            font-size: 0.76rem;
-            padding: 5px 12px;
+            font-size: 0.74rem;
+            padding: 4px 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Scrollbar Halus untuk Tabel & Subnav */
+        .table-responsive::-webkit-scrollbar,
+        .subnav::-webkit-scrollbar {
+            height: 5px;
+        }
+        .table-responsive::-webkit-scrollbar-track,
+        .subnav::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 10px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb,
+        .subnav::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb:hover,
+        .subnav::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Subnav Container with Swipe Indicator */
+        .subnav-wrapper {
+            position: relative;
+            background: #FFFFFF;
+        }
+        .subnav-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 24px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        @media (min-width: 992px) {
+            .subnav-wrapper::after {
+                display: none;
+            }
         }
 
         @media (max-width: 767.98px) {
@@ -336,18 +386,31 @@
                 padding-right: 0.75rem !important;
             }
             .page-header-title {
-                font-size: 1.25rem !important;
+                font-size: 1.2rem !important;
+                line-height: 1.3 !important;
             }
             .page-header-subtitle {
                 font-size: 0.75rem !important;
             }
             .table-responsive {
                 -webkit-overflow-scrolling: touch;
-                border-radius: 12px;
+                border-radius: 14px;
                 overflow-x: auto;
+                border: 1px solid #E2E8F0;
+                background: #FFFFFF;
             }
             .table-responsive table {
                 min-width: 580px;
+                margin-bottom: 0;
+            }
+            .table-responsive th, 
+            .table-responsive td {
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+            .table-responsive .badge,
+            .table-responsive .btn {
+                white-space: nowrap !important;
             }
             .navbar-logo-container {
                 padding: 4px;
@@ -364,19 +427,19 @@
                 display: none;
             }
             .navbar-brand-title {
-                font-size: 1.1rem !important;
+                font-size: 1.05rem !important;
             }
             .navbar-brand-subtitle {
                 display: none !important;
             }
             .content-card {
-                padding: 1rem 0.85rem !important;
+                padding: 1.15rem 0.95rem !important;
                 border-radius: 16px !important;
                 margin-bottom: 1rem !important;
             }
             .subnav .nav-link {
-                padding: 0.65rem 0.85rem;
-                font-size: 0.8rem;
+                padding: 0.7rem 0.9rem;
+                font-size: 0.825rem;
                 flex-shrink: 0;
             }
             .nav-pill-item {
@@ -390,13 +453,14 @@
                 border-radius: 50% !important;
             }
             .avatar-circle {
-                width: 28px !important;
-                height: 28px !important;
+                width: 30px !important;
+                height: 30px !important;
                 font-size: 0.72rem !important;
                 border-width: 1.5px !important;
             }
             .modal-dialog {
-                margin: 0.75rem !important;
+                margin: 0.5rem auto !important;
+                max-width: calc(100% - 1rem) !important;
             }
             .modal-content {
                 border-radius: 18px !important;
@@ -428,20 +492,24 @@
                 height: 36px;
                 font-size: 1rem;
             }
-            .table > :not(caption) > * > * {
-                padding: 0.65rem 0.65rem;
+            .table-responsive table {
                 font-size: 0.825rem;
             }
+            .table-responsive th {
+                font-size: 0.75rem !important;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+            }
+            .table > :not(caption) > * > * {
+                padding: 0.65rem 0.65rem !important;
+            }
             .mobile-clock-strip {
-                font-size: 0.72rem !important;
-                padding: 4px 8px !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
+                font-size: 0.7rem !important;
+                padding: 3.5px 6px !important;
             }
             .notif-dropdown-menu {
                 position: fixed !important;
-                top: 50px !important;
+                top: 52px !important;
                 left: 10px !important;
                 right: 10px !important;
                 width: calc(100vw - 20px) !important;
@@ -449,11 +517,32 @@
                 max-width: none !important;
                 margin: 0 auto !important;
                 transform: none !important;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-                z-index: 1070 !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+                border-radius: 18px !important;
+                z-index: 1080 !important;
             }
             .btn-responsive-mobile {
-                width: 100%;
+                width: 100% !important;
+            }
+            .form-control, .form-select {
+                font-size: 0.875rem !important;
+            }
+            .content-card h5 {
+                font-size: 1.05rem !important;
+            }
+            .content-card small.text-muted {
+                font-size: 0.75rem !important;
+            }
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4px;
+            }
+            .pagination .page-item .page-link {
+                padding: 0.35rem 0.65rem;
+                font-size: 0.8rem;
+                border-radius: 8px !important;
+                margin: 0 1px;
             }
         }
 
@@ -607,8 +696,12 @@
                 <!-- Clickable Profile Avatar Dropdown Menu (Includes Profile & Logout) -->
                 <div class="dropdown">
                     <a href="#" class="user-avatar-link dropdown-toggle text-decoration-none d-flex align-items-center rounded-pill" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Pengguna">
-                        <div class="avatar-circle">
-                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
+                        <div class="avatar-circle overflow-hidden">
+                            @if(Auth::user()->avatar)
+                                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-100 h-100" style="object-fit: cover;">
+                            @else
+                                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
+                            @endif
                         </div>
                         <div class="text-start d-none d-md-block pe-1">
                             <div class="fw-bold lh-sm text-white" style="font-size: 0.85rem; margin-bottom: 3px;">{{ Auth::user()->name ?? 'Pengguna' }}</div>
@@ -619,10 +712,19 @@
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" style="min-width: 230px;">
-                        <li class="px-3 py-2 border-bottom mb-1 bg-light rounded-3">
-                            <div class="fw-bold text-dark lh-sm" style="font-size: 0.875rem;">{{ Auth::user()->name }}</div>
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">{{ Auth::user()->email }}</small>
-                            <span class="role-badge-pill mt-1.5 d-inline-block">{{ strtoupper(Auth::user()->role ?? 'ANGGOTA') }}</span>
+                        <li class="px-3 py-2 border-bottom mb-1 bg-light rounded-3 d-flex align-items-center gap-2.5">
+                            <div class="avatar-circle flex-shrink-0 overflow-hidden" style="width: 38px; height: 38px;">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}" class="w-100 h-100" style="object-fit: cover;">
+                                @else
+                                    {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
+                                @endif
+                            </div>
+                            <div class="overflow-hidden">
+                                <div class="fw-bold text-dark lh-sm text-truncate" style="font-size: 0.875rem;">{{ Auth::user()->name }}</div>
+                                <small class="text-muted d-block text-truncate" style="font-size: 0.75rem;">{{ Auth::user()->email }}</small>
+                                <span class="role-badge-pill mt-1 d-inline-block">{{ strtoupper(Auth::user()->role ?? 'ANGGOTA') }}</span>
+                            </div>
                         </li>
                         <li>
                             <a class="dropdown-item rounded-3 py-2 d-flex align-items-center gap-2 fw-semibold" href="{{ route('profile.edit') }}">
@@ -655,8 +757,9 @@
     </nav>
 
     <!-- Sub Navigation Bar for Module Links -->
-    <div class="subnav shadow-sm mb-4 no-print">
-        <div class="container-fluid px-lg-4 d-flex">
+    <div class="subnav-wrapper shadow-sm mb-3 mb-md-4 no-print">
+        <div class="subnav">
+            <div class="container-fluid px-lg-4 d-flex">
             @if(auth()->user()->isAdmin())
                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                     <i class="bi bi-grid-fill me-1"></i> Dashboard
@@ -704,6 +807,7 @@
             @endif
         </div>
     </div>
+</div>
 
     <!-- Main Content Container -->
     <main class="container-fluid px-lg-4 pb-5">
@@ -785,6 +889,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateLiveClock();
             setInterval(updateLiveClock, 1000);
+
+            // Auto-scroll menu aktif pada subnav agar langsung terlihat di mobile
+            const subnavEl = document.querySelector('.subnav');
+            const activeLink = document.querySelector('.subnav .nav-link.active');
+            if (subnavEl && activeLink) {
+                setTimeout(function() {
+                    const subnavRect = subnavEl.getBoundingClientRect();
+                    const activeRect = activeLink.getBoundingClientRect();
+                    if (activeRect.left < subnavRect.left || activeRect.right > subnavRect.right) {
+                        activeLink.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    }
+                }, 100);
+            }
         });
     </script>
 

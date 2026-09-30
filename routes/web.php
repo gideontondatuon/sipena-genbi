@@ -30,7 +30,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('user.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 // Notifikasi Routes
 Route::middleware('auth')->group(function () {
@@ -97,6 +97,8 @@ Route::middleware(['auth', 'verified', 'anggota'])->prefix('user')->name('user.'
     Route::post('/tambah-laporan', [UserLaporanController::class, 'store'])->name('laporan.store');
     Route::post('/fetch-ig-info', [UserLaporanController::class, 'fetchInstagramInfo'])->name('laporan.fetch-ig-info');
     Route::get('/riwayat', [UserRiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/laporan/{laporan}/edit', [UserLaporanController::class, 'edit'])->name('laporan.edit');
+    Route::put('/laporan/{laporan}', [UserLaporanController::class, 'update'])->name('laporan.update');
     Route::get('/preview-laporan', [UserLaporanController::class, 'previewIndividual'])->name('preview-laporan');
     Route::delete('/laporan/{laporan}', [UserLaporanController::class, 'destroy'])->name('laporan.destroy');
 });

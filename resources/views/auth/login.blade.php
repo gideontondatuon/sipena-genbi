@@ -94,7 +94,7 @@
         </div>
 
         <h3 class="auth-form-title mb-1">Masuk ke Sistem</h3>
-        <p class="text-muted small mb-0">Silakan masukkan username dan kata sandi akun Anda.</p>
+        <p class="text-muted small mb-0">Silakan masukkan username atau email dan kata sandi akun Anda.</p>
     </div>
 
     <!-- Session Status Alert -->
@@ -103,9 +103,9 @@
     <form method="POST" action="{{ route('login') }}" id="loginForm">
         @csrf
 
-        <!-- Input Username -->
+        <!-- Input Username / Email -->
         <div class="mb-3">
-            <label for="username" class="form-label fw-bold text-dark small mb-1.5">Username</label>
+            <label for="username" class="form-label fw-bold text-dark small mb-1.5">Username / Email</label>
             <div class="input-group auth-input-group">
                 <span class="input-group-text">
                     <i class="bi bi-person-fill fs-6"></i>
@@ -115,7 +115,7 @@
                        name="username" 
                        value="{{ old('username') }}" 
                        class="form-control @error('username') is-invalid @enderror" 
-                       placeholder="masukkan username anda..." 
+                       placeholder="masukkan username atau email anda..." 
                        required 
                        autofocus 
                        autocomplete="username">
@@ -167,20 +167,7 @@
             </label>
         </div>
 
-        <!-- Quick Account Tips -->
-        <div class="p-2.5 rounded-3 bg-light border text-muted small d-flex flex-column gap-1 mb-3">
-            <div class="fw-semibold text-dark d-flex align-items-center gap-1.5" style="font-size: 0.8rem;">
-                <i class="bi bi-info-circle-fill text-primary"></i> Pilihan Akun Login:
-            </div>
-            <div class="d-flex flex-wrap gap-2 pt-1">
-                <button type="button" onclick="fillCredentials('sipenagenbi@gmail.com', 'password')" class="btn btn-sm btn-outline-primary py-1 px-2.5 rounded-pill text-break" style="font-size: 0.72rem; max-width: 100%;">
-                    <i class="bi bi-shield-check"></i> Admin: <strong>sipenagenbi@gmail.com</strong>
-                </button>
-                <button type="button" onclick="fillCredentials('gideon', 'password')" class="btn btn-sm btn-outline-secondary py-0 px-2 rounded-pill" style="font-size: 0.75rem;">
-                    <i class="bi bi-person"></i> Anggota: <strong>gideon</strong>
-                </button>
-            </div>
-        </div>
+
 
         <!-- Submit Button -->
         <button type="submit" class="btn btn-genbi-submit w-100 mb-3 d-flex align-items-center justify-content-center gap-2">
@@ -214,14 +201,6 @@
             }
         }
 
-        function fillCredentials(user, pass) {
-            const userInput = document.getElementById('username');
-            const passInput = document.getElementById('password');
-            if (userInput && passInput) {
-                userInput.value = user;
-                passInput.value = pass;
-            }
-        }
     </script>
 </x-guest-layout>
 

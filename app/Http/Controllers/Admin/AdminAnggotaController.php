@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
 
 class AdminAnggotaController extends Controller
 {
@@ -17,7 +18,8 @@ class AdminAnggotaController extends Controller
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('email', 'like', '%' . $request->search . '%')
-                  ->orWhere('username', 'like', '%' . $request->search . '%');
+                  ->orWhere('username', 'like', '%' . $request->search . '%')
+                  ->orWhere('nim', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -55,6 +57,7 @@ class AdminAnggotaController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
         $validated['status'] = 'aktif';
+        $validated['email_verified_at'] = Carbon::now(); // Auto-verifikasi akun yang dibuat admin
 
         User::create($validated);
 

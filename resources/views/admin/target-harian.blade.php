@@ -51,8 +51,12 @@
         <div class="content-card">
             <h5 class="fw-bold mb-3">Target Aktif</h5>
 
+            <div class="d-md-none text-muted small mb-2">
+                <i class="bi bi-arrow-left-right me-1 text-primary"></i>Geser ke samping untuk melihat deadline & aksi
+            </div>
+
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle" style="min-width: 580px;">
                     <thead>
                         <tr>
                             <th>Akun</th>

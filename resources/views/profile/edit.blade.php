@@ -385,9 +385,35 @@
                 </div>
             </div>
             <div class="profile-card-body">
-                <form method="post" action="{{ route('profile.update') }}">
+                <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('patch')
+
+                    {{-- Avatar Upload --}}
+                    <div class="mb-3">
+                        <label class="form-label-premium">Foto Profil</label>
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            @if(auth()->user()->avatar)
+                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
+                                     alt="Avatar" class="rounded-circle border"
+                                     style="width:56px;height:56px;object-fit:cover;">
+                            @else
+                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
+                                     style="width:56px;height:56px;font-size:1.3rem;background:linear-gradient(135deg,#002B66,#1a56d6)!important;">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <div>
+                                <input type="file" name="avatar" id="avatar"
+                                       class="form-control form-control-premium @error('avatar') is-invalid @enderror"
+                                       accept="image/jpg,image/jpeg,image/png,image/webp">
+                                <div class="input-hint">JPG/PNG/WebP, maksimal 2 MB</div>
+                            </div>
+                        </div>
+                        @error('avatar')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+
+                    <hr class="field-divider">
 
                     <div class="mb-3">
                         <label for="name" class="form-label-premium">Nama Lengkap</label>

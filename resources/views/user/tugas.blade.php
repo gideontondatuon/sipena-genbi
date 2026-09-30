@@ -10,11 +10,15 @@
             <h5 class="fw-bold mb-1">Daftar Tugas</h5>
             <small class="text-muted">Sistem otomatis menghitung kelengkapan berdasarkan target admin</small>
         </div>
-        <a href="{{ route('user.laporan.create') }}" class="btn btn-bi">+ Upload Laporan</a>
+        <a href="{{ route('user.laporan.create') }}" class="btn btn-bi w-100 w-sm-auto"><i class="bi bi-plus-circle me-1"></i> + Upload Laporan</a>
+    </div>
+
+    <div class="d-md-none text-muted small mb-2">
+        <i class="bi bi-arrow-left-right me-1 text-primary"></i>Geser ke samping untuk melihat status & aksi tugas
     </div>
 
     <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table align-middle" style="min-width: 680px;">
             <thead>
                 <tr>
                     <th>Akun</th>

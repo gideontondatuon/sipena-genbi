@@ -10,27 +10,31 @@
             <h5 class="fw-bold mb-1">Daftar Anggota</h5>
             <small class="text-muted">Data pengguna yang dapat mengunggah laporan</small>
         </div>
-        <button class="btn btn-bi" data-bs-toggle="modal" data-bs-target="#modalTambahAnggota">+ Tambah Anggota</button>
+        <button class="btn btn-bi w-100 w-sm-auto" data-bs-toggle="modal" data-bs-target="#modalTambahAnggota">+ Tambah Anggota</button>
     </div>
 
-    <form method="GET" action="{{ route('admin.anggota.index') }}" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Cari nama, username, atau email..." value="{{ request('search') }}">
+    <form method="GET" action="{{ route('admin.anggota.index') }}" class="row g-2 g-md-3 mb-4">
+        <div class="col-12 col-md-5">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari nama, username, email, NIM..." value="{{ request('search') }}">
         </div>
-        <div class="col-md-3">
-            <select name="status" class="form-select" onchange="this.form.submit()">
+        <div class="col-7 col-md-4">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="Semua Status">Semua Status</option>
                 <option value="Aktif" {{ request('status') === 'Aktif' ? 'selected' : '' }}>Aktif</option>
                 <option value="Nonaktif" {{ request('status') === 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-search"></i> Cari</button>
+        <div class="col-5 col-md-3">
+            <button type="submit" class="btn btn-outline-secondary btn-sm w-100"><i class="bi bi-search me-1"></i> Cari</button>
         </div>
     </form>
 
+    <div class="d-md-none text-muted small mb-2">
+        <i class="bi bi-arrow-left-right me-1 text-primary"></i>Geser ke samping untuk melihat kelola data anggota
+    </div>
+
     <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table align-middle" style="min-width: 640px;">
             <thead>
                 <tr>
                     <th>Nama & Username</th>

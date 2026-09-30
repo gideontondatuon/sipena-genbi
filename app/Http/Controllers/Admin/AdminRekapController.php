@@ -13,10 +13,14 @@ class AdminRekapController extends Controller
 {
     public function index(Request $request)
     {
-        $tanggalMulai = $request->get('tanggal_mulai', date('Y-m-01'));
+        $tanggalMulai   = $request->get('tanggal_mulai', date('Y-m-01'));
         $tanggalSelesai = $request->get('tanggal_selesai', date('Y-m-t'));
+        $filterAktif    = $request->get('filter_aktif', 'aktif'); // aktif|nonaktif|semua
 
-        $query = User::where('role', 'anggota')->where('status', 'aktif');
+        $query = User::where('role', 'anggota');
+        if ($filterAktif !== 'semua') {
+            $query->where('status', $filterAktif);
+        }
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -67,6 +71,6 @@ class AdminRekapController extends Controller
             $members = $members->filter(fn($m) => strtolower($m->status) === strtolower($filterStatus));
         }
 
-        return view('admin.rekap', compact('tanggalMulai', 'tanggalSelesai', 'members'));
+        return view('admin.rekap', compact('tanggalMulai', 'tanggalSelesai', 'members', 'filterAktif'));
     }
 }

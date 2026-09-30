@@ -46,7 +46,7 @@ class LoginRequest extends FormRequest
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         if (! Auth::attempt([$fieldType => $login, 'password' => $this->input('password')], $this->boolean('remember'))) {
-            // As fallback, if user entered username that was actually an email or vice versa:
+            // Fallback: coba field lain (email ↔ username)
             $altFieldType = $fieldType === 'username' ? 'email' : 'username';
             if (! Auth::attempt([$altFieldType => $login, 'password' => $this->input('password')], $this->boolean('remember'))) {
                 RateLimiter::hit($this->throttleKey());

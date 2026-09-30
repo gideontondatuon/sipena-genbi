@@ -114,6 +114,59 @@ class UserLaporanController extends Controller
         return redirect()->route('user.riwayat.index')->with('success', 'Laporan postingan berhasil dikirim dan sedang menunggu validasi admin.');
     }
 
+    public function edit(\App\Models\Laporan $laporan)
+    {
+        // Hanya pemilik laporan & status perlu_perbaikan yang bisa edit
+        if ($laporan->user_id !== auth()->id()) abort(403);
+        if ($laporan->status !== 'perlu_perbaikan') {
+            return redirect()->route('user.riwayat.index')
+                ->with('error', 'Hanya laporan berstatus "Perlu Perbaikan" yang bisa diedit.');
+        }
+
+        $akunList = \App\Models\AkunInstagram::where('status', 'aktif')->get();
+        return view('user.edit-laporan', compact('laporan', 'akunList'));
+    }
+
+    public function update(Request $request, \App\Models\Laporan $laporan)
+    {
+        if ($laporan->user_id !== auth()->id()) abort(403);
+        if ($laporan->status !== 'perlu_perbaikan') abort(403);
+
+        $request->validate([
+            'keterangan'  => 'nullable|string',
+            'bukti_like'  => 'nullable|image|max:5120',
+            'bukti_komen' => 'nullable|image|max:5120',
+            'bukti_share' => 'nullable|image|max:5120',
+        ]);
+
+        $optimizer = app(\App\Services\ImageOptimizationService::class);
+        $updates   = ['keterangan' => $request->keterangan, 'status' => 'menunggu', 'catatan_admin' => null];
+
+        if ($request->hasFile('bukti_like')) {
+            if ($laporan->bukti_like) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_like);
+            $r = $optimizer->optimizeAndStore($request->file('bukti_like'), 'laporan/like');
+            $updates['bukti_like'] = $r['path'];
+            $updates['hash_like']  = $r['hash'];
+        }
+        if ($request->hasFile('bukti_komen')) {
+            if ($laporan->bukti_komen) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_komen);
+            $r = $optimizer->optimizeAndStore($request->file('bukti_komen'), 'laporan/komen');
+            $updates['bukti_komen'] = $r['path'];
+            $updates['hash_komen']  = $r['hash'];
+        }
+        if ($request->hasFile('bukti_share')) {
+            if ($laporan->bukti_share) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_share);
+            $r = $optimizer->optimizeAndStore($request->file('bukti_share'), 'laporan/share');
+            $updates['bukti_share'] = $r['path'];
+            $updates['hash_share']  = $r['hash'];
+        }
+
+        $laporan->update($updates);
+
+        return redirect()->route('user.riwayat.index')
+            ->with('success', 'Laporan berhasil diperbaiki dan kini menunggu validasi ulang dari admin.');
+    }
+
     public function fetchInstagramInfo(Request $request)
     {
         $link = $request->get('link');

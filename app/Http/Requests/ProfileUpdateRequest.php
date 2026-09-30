@@ -17,10 +17,11 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'nim' => ['nullable', 'string', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:25'],
-            'email' => [
+            'name'   => ['required', 'string', 'max:255'],
+            'nim'    => ['nullable', 'string', 'max:50'],
+            'phone'  => ['nullable', 'string', 'max:25'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'email'  => [
                 'required',
                 'string',
                 'lowercase',

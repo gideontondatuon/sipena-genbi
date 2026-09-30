@@ -16,8 +16,12 @@
         </div>
     </div>
 
+    <div class="d-md-none text-muted small mb-2">
+        <i class="bi bi-arrow-left-right me-1 text-primary"></i>Geser ke samping untuk melihat status & aksi
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-sm table-hover align-middle">
+        <table class="table table-sm table-hover align-middle" style="min-width: 650px;">
             <thead>
                 <tr>
                     <th class="d-none d-sm-table-cell">No</th>
@@ -74,8 +78,13 @@
                         </td>
                         <td class="d-none d-md-table-cell"><small class="text-muted">{{ $item->created_at->format('d M Y, H:i') }}</small></td>
                         <td>
-                            <div class="d-flex gap-1">
+                            <div class="d-flex gap-1 flex-wrap">
                                 <a href="{{ route('user.preview-laporan') }}" class="btn btn-sm btn-outline-primary rounded-3" title="Lihat"><i class="bi bi-eye"></i> <span class="d-none d-sm-inline">Lihat</span></a>
+                                @if($item->status === 'perlu_perbaikan')
+                                    <a href="{{ route('user.laporan.edit', $item->id) }}" class="btn btn-sm btn-warning rounded-3" title="Perbaiki" style="color:#1a1a1a;">
+                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">Perbaiki</span>
+                                    </a>
+                                @endif
                                 <form action="{{ route('user.laporan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus entry laporan ini?')">
                                     @csrf
                                     @method('DELETE')

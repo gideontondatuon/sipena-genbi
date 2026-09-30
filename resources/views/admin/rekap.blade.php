@@ -11,26 +11,26 @@
             <small class="text-muted">Daftar anggota lengkap, belum lengkap, dan belum upload</small>
         </div>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.export.xlsx', ['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'status' => request('status')]) }}" class="btn btn-outline-success rounded-4"><i class="bi bi-file-earmark-excel me-1"></i> Export Excel (.xlsx)</a>
-            <a href="{{ route('admin.preview-rekap', ['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'status' => request('status')]) }}" class="btn btn-bi rounded-4"><i class="bi bi-file-earmark-pdf me-1"></i> Preview / Cetak PDF Rekap</a>
+        <div class="d-flex gap-2 flex-column flex-sm-row w-100 w-sm-auto">
+            <a href="{{ route('admin.export.xlsx', ['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'status' => request('status'), 'filter_aktif' => request('filter_aktif', 'aktif')]) }}" class="btn btn-outline-success rounded-4 w-100 w-sm-auto"><i class="bi bi-file-earmark-excel me-1"></i> Export Excel</a>
+            <a href="{{ route('admin.preview-rekap', ['tanggal_mulai' => $tanggalMulai, 'tanggal_selesai' => $tanggalSelesai, 'status' => request('status'), 'filter_aktif' => request('filter_aktif', 'aktif')]) }}" class="btn btn-bi rounded-4 w-100 w-sm-auto"><i class="bi bi-file-earmark-pdf me-1"></i> Preview / Cetak PDF</a>
         </div>
     </div>
 
-    <form method="GET" action="{{ route('admin.rekap.index') }}" class="row g-3 mb-4 align-items-end">
-        <div class="col-md-3">
-            <label class="form-label fw-semibold small text-muted"><i class="bi bi-calendar-event me-1 text-primary"></i> Dari Tanggal</label>
-            <input type="date" name="tanggal_mulai" class="form-control" value="{{ $tanggalMulai }}" onchange="this.form.submit()">
+    <form method="GET" action="{{ route('admin.rekap.index') }}" class="row g-2 g-md-3 mb-4 align-items-end">
+        <div class="col-6 col-md-2">
+            <label class="form-label fw-semibold small text-muted mb-1"><i class="bi bi-calendar-event me-1 text-primary"></i> Dari</label>
+            <input type="date" name="tanggal_mulai" class="form-control form-control-sm" value="{{ $tanggalMulai }}" onchange="this.form.submit()">
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label fw-semibold small text-muted"><i class="bi bi-calendar-check me-1 text-primary"></i> Sampai Tanggal</label>
-            <input type="date" name="tanggal_selesai" class="form-control" value="{{ $tanggalSelesai }}" onchange="this.form.submit()">
+        <div class="col-6 col-md-2">
+            <label class="form-label fw-semibold small text-muted mb-1"><i class="bi bi-calendar-check me-1 text-primary"></i> Sampai</label>
+            <input type="date" name="tanggal_selesai" class="form-control form-control-sm" value="{{ $tanggalSelesai }}" onchange="this.form.submit()">
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label fw-semibold small text-muted"><i class="bi bi-funnel me-1 text-primary"></i> Status Filter</label>
-            <select name="status" class="form-select" onchange="this.form.submit()">
+        <div class="col-6 col-md-3">
+            <label class="form-label fw-semibold small text-muted mb-1"><i class="bi bi-funnel me-1 text-primary"></i> Status Laporan</label>
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="Semua Status">Semua Status</option>
                 <option value="Lengkap" {{ request('status') === 'Lengkap' ? 'selected' : '' }}>Lengkap</option>
                 <option value="Belum Lengkap" {{ request('status') === 'Belum Lengkap' ? 'selected' : '' }}>Belum Lengkap</option>
@@ -38,17 +38,30 @@
             </select>
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label fw-semibold small text-muted"><i class="bi bi-search me-1 text-primary"></i> Cari Anggota</label>
-            <div class="input-group">
+        <div class="col-6 col-md-2">
+            <label class="form-label fw-semibold small text-muted mb-1"><i class="bi bi-person-badge me-1 text-primary"></i> Anggota</label>
+            <select name="filter_aktif" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="aktif" {{ request('filter_aktif', 'aktif') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                <option value="nonaktif" {{ request('filter_aktif') === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                <option value="semua" {{ request('filter_aktif') === 'semua' ? 'selected' : '' }}>Semua</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-md-3">
+            <label class="form-label fw-semibold small text-muted mb-1"><i class="bi bi-search me-1 text-primary"></i> Cari</label>
+            <div class="input-group input-group-sm">
                 <input type="text" name="search" class="form-control" placeholder="Cari nama..." value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
             </div>
         </div>
     </form>
 
+    <div class="d-md-none text-muted small mb-2">
+        <i class="bi bi-arrow-left-right me-1 text-primary"></i>Geser ke samping untuk melihat seluruh kolom data
+    </div>
+
     <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table align-middle" style="min-width: 720px;">
             <thead>
                 <tr>
                     <th>Nama Anggota</th>

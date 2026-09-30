@@ -59,9 +59,9 @@
     </div>
 
     <!-- Filter Form -->
-    <form method="GET" action="{{ route('admin.validasi.index') }}" class="row g-3 mb-4">
-        <div class="col-md-3">
-            <select name="status" class="form-select" onchange="this.form.submit()">
+    <form method="GET" action="{{ route('admin.validasi.index') }}" class="row g-2 g-md-3 mb-4">
+        <div class="col-6 col-md-3">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="Menunggu Validasi" {{ request('status') === 'Menunggu Validasi' || !request('status') ? 'selected' : '' }}>Menunggu Validasi</option>
                 <option value="Valid" {{ request('status') === 'Valid' ? 'selected' : '' }}>Valid</option>
                 <option value="Ditolak" {{ request('status') === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
@@ -70,8 +70,8 @@
             </select>
         </div>
 
-        <div class="col-md-3">
-            <select name="akun_id" class="form-select" onchange="this.form.submit()">
+        <div class="col-6 col-md-3">
+            <select name="akun_id" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="Semua Akun">Semua Akun</option>
                 @foreach($akunList as $akun)
                     <option value="{{ $akun->id }}" {{ request('akun_id') == $akun->id ? 'selected' : '' }}>{{ $akun->nama_akun }}</option>
@@ -79,13 +79,13 @@
             </select>
         </div>
 
-        <div class="col-md-3">
-            <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}" onchange="this.form.submit()">
+        <div class="col-6 col-md-3">
+            <input type="date" name="tanggal" class="form-control form-control-sm" value="{{ request('tanggal') }}" onchange="this.form.submit()">
         </div>
 
-        <div class="col-md-3">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cari nama anggota..." value="{{ request('search') }}">
+        <div class="col-6 col-md-3">
+            <div class="input-group input-group-sm">
+                <input type="text" name="search" class="form-control" placeholder="Cari nama..." value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
             </div>
         </div>
@@ -98,19 +98,19 @@
         <!-- Sticky Bulk Toolbar -->
         @if($laporans->count() > 0)
             <div class="bulk-action-bar mb-4">
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
                     <div class="form-check mb-0">
-                        <input class="form-check-input" type="checkbox" id="selectAllCheckboxes" onchange="toggleSelectAll(this)" style="cursor: pointer; transform: scale(1.2);">
-                        <label class="form-check-label fw-bold text-white mb-0" for="selectAllCheckboxes" style="cursor: pointer;">
+                        <input class="form-check-input" type="checkbox" id="selectAllCheckboxes" onchange="toggleSelectAll(this)" style="cursor: pointer; transform: scale(1.1);">
+                        <label class="form-check-label fw-bold text-white mb-0 small" for="selectAllCheckboxes" style="cursor: pointer;">
                             Pilih Semua (<span id="selectedCount">0</span>/{{ $laporans->count() }})
                         </label>
                     </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <input type="text" name="catatan_admin" class="form-control form-control-sm border-0 rounded-3" placeholder="Catatan masal (opsional)..." style="width: 240px;">
-                    <button type="submit" name="status" value="valid" class="btn btn-success btn-sm rounded-4 fw-bold"><i class="bi bi-check-all me-1"></i> Validasi Masal</button>
-                    <button type="submit" name="status" value="ditolak" class="btn btn-danger btn-sm rounded-4 fw-bold"><i class="bi bi-x-circle me-1"></i> Tolak Masal</button>
+                <div class="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 flex-wrap">
+                    <input type="text" name="catatan_admin" class="form-control form-control-sm border-0 rounded-3 flex-grow-1 flex-md-grow-0" placeholder="Catatan masal..." style="min-width: 140px; max-width: 250px;">
+                    <button type="submit" name="status" value="valid" class="btn btn-success btn-sm rounded-4 fw-bold flex-grow-1 flex-md-grow-0"><i class="bi bi-check-all me-1"></i> Valid Masal</button>
+                    <button type="submit" name="status" value="ditolak" class="btn btn-danger btn-sm rounded-4 fw-bold flex-grow-1 flex-md-grow-0"><i class="bi bi-x-circle me-1"></i> Tolak Masal</button>
                 </div>
             </div>
         @endif
@@ -235,6 +235,12 @@
             @endforelse
         </div>
     </form>
+
+    @if($laporans->hasPages())
+        <div class="mt-4 pt-2 d-flex justify-content-center">
+            {{ $laporans->links('pagination::bootstrap-5') }}
+        </div>
+    @endif
 </div>
 
 <!-- Hidden Single Form for Individual Validation Submit -->
