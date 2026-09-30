@@ -80,11 +80,9 @@
                         <td>
                             <div class="d-flex gap-1 flex-wrap">
                                 <a href="{{ route('user.preview-laporan') }}" class="btn btn-sm btn-outline-primary rounded-3" title="Lihat"><i class="bi bi-eye"></i> <span class="d-none d-sm-inline">Lihat</span></a>
-                                @if($item->status === 'perlu_perbaikan')
-                                    <a href="{{ route('user.laporan.edit', $item->id) }}" class="btn btn-sm btn-warning rounded-3" title="Perbaiki" style="color:#1a1a1a;">
-                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">Perbaiki</span>
-                                    </a>
-                                @endif
+                                <a href="{{ route('user.laporan.edit', $item->id) }}" class="btn btn-sm btn-outline-warning rounded-3" title="Edit Laporan">
+                                    <i class="bi bi-pencil-square"></i> <span class="d-none d-sm-inline">Edit</span>
+                                </a>
                                 <form action="{{ route('user.laporan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus entry laporan ini?')">
                                     @csrf
                                     @method('DELETE')

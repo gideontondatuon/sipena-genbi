@@ -125,13 +125,15 @@
         flex-direction: row;
         align-items: stretch;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
         background-color: #F8FAFC;
         padding: 8px;
         border-radius: 10px;
         border: 1px solid var(--bi-border);
         overflow: hidden;
-        margin-top: 0.5rem;
+        margin-top: 0.4rem;
+        flex: 1;
+        min-height: 0;
     }
 
     @media (max-width: 575.98px) {
@@ -155,12 +157,13 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
+        align-items: stretch;
+        justify-content: flex-start;
         background-color: #FFFFFF;
         border-radius: 6px;
         border: 1px solid #E2E8F0;
         overflow: hidden;
+        min-height: 0;
     }
 
     .screenshot-caption {
@@ -169,19 +172,33 @@
         color: var(--bi-navy);
         font-weight: 700;
         font-size: 0.8rem;
-        padding: 0.4rem 0.5rem;
+        padding: 0.35rem 0.5rem;
         text-align: center;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         border-bottom: 1px solid #E2E8F0;
     }
 
-    .screenshot-img {
+    .screenshot-img-wrapper {
+        flex: 1;
         width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        background-color: #FFFFFF;
+        min-height: 0;
+    }
+
+    .screenshot-img {
+        width: auto;
         height: auto;
-        max-height: 420px;
+        max-width: 100%;
+        max-height: 520px;
         object-fit: contain;
         display: block;
+        margin: auto;
+        border-radius: 4px;
     }
 
     .screenshot-placeholder {
@@ -189,6 +206,7 @@
         color: #94A3B8;
         font-size: 0.8rem;
         text-align: center;
+        margin: auto;
     }
 
     @media (max-width: 767.98px) {
@@ -293,15 +311,19 @@
         }
 
         .post-page-card {
-            height: 185mm !important;
-            max-height: 185mm !important;
+            height: 194mm !important;
+            min-height: 194mm !important;
+            max-height: 194mm !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
             page-break-after: always !important;
             break-after: page !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             margin: 0 !important;
-            border: 1px solid #CBD5E1 !important;
-            padding: 0.75rem !important;
+            border: 1.5px solid #CBD5E1 !important;
+            padding: 0.5rem 0.75rem !important;
             box-shadow: none !important;
             overflow: hidden !important;
             box-sizing: border-box !important;
@@ -310,28 +332,10 @@
         .account-badge-header {
             background-color: #002B66 !important;
             color: #FFFFFF !important;
+            padding: 0.4rem 0.85rem !important;
+            margin-bottom: 0.35rem !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-        }
-
-        .screenshot-row {
-            flex-direction: row !important;
-            background-color: #F8FAFC !important;
-            border: 1px solid #CBD5E1 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        .screenshot-caption {
-            background-color: #F1F5F9 !important;
-            color: #002B66 !important;
-            border-bottom: 1px solid #CBD5E1 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        .screenshot-img {
-            max-height: 360px !important;
         }
 
         .post-topic-box {
@@ -340,8 +344,66 @@
             border-left: 4px solid #002B66 !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            margin-bottom: 0.4rem !important;
-            padding: 0.35rem 0.75rem !important;
+            margin-bottom: 0.35rem !important;
+            padding: 0.3rem 0.75rem !important;
+        }
+
+        .screenshot-row {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: stretch !important;
+            gap: 8px !important;
+            background-color: #F8FAFC !important;
+            border: 1px solid #CBD5E1 !important;
+            padding: 6px !important;
+            margin-top: 0.2rem !important;
+            margin-bottom: 0.2rem !important;
+            min-height: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .screenshot-col {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            background-color: #FFFFFF !important;
+            border-radius: 6px !important;
+            border: 1px solid #CBD5E1 !important;
+            overflow: hidden !important;
+            min-height: 0 !important;
+        }
+
+        .screenshot-caption {
+            background-color: #F1F5F9 !important;
+            color: #002B66 !important;
+            border-bottom: 1px solid #CBD5E1 !important;
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.8rem !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .screenshot-img-wrapper {
+            flex: 1 !important;
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 4px !important;
+            min-height: 0 !important;
+        }
+
+        .screenshot-img {
+            max-height: 144mm !important;
+            max-width: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            display: block !important;
+            margin: auto !important;
         }
 
         .no-print {
@@ -508,7 +570,9 @@
                             <i class="bi bi-hand-thumbs-up-fill me-1" style="color: var(--bi-navy);"></i> LIKE
                         </div>
                         @if($laporan->bukti_like)
-                            <img src="{{ asset('storage/' . $laporan->bukti_like) }}" alt="Bukti Like" class="screenshot-img">
+                            <div class="screenshot-img-wrapper">
+                                <img src="{{ asset('storage/' . $laporan->bukti_like) }}" alt="Bukti Like" class="screenshot-img">
+                            </div>
                         @else
                             <div class="screenshot-placeholder">
                                 <i class="bi bi-hand-thumbs-up fs-3 d-block mb-1"></i>
@@ -523,7 +587,9 @@
                             <i class="bi bi-chat-left-text-fill me-1" style="color: var(--bi-navy);"></i> KOMEN
                         </div>
                         @if($laporan->bukti_komen)
-                            <img src="{{ asset('storage/' . $laporan->bukti_komen) }}" alt="Bukti Komen" class="screenshot-img">
+                            <div class="screenshot-img-wrapper">
+                                <img src="{{ asset('storage/' . $laporan->bukti_komen) }}" alt="Bukti Komen" class="screenshot-img">
+                            </div>
                         @else
                             <div class="screenshot-placeholder">
                                 <i class="bi bi-chat-left-text fs-3 d-block mb-1"></i>
@@ -538,7 +604,9 @@
                             <i class="bi bi-share-fill me-1" style="color: var(--bi-navy);"></i> SHARE
                         </div>
                         @if($laporan->bukti_share)
-                            <img src="{{ asset('storage/' . $laporan->bukti_share) }}" alt="Bukti Share" class="screenshot-img">
+                            <div class="screenshot-img-wrapper">
+                                <img src="{{ asset('storage/' . $laporan->bukti_share) }}" alt="Bukti Share" class="screenshot-img">
+                            </div>
                         @else
                             <div class="screenshot-placeholder">
                                 <i class="bi bi-share fs-3 d-block mb-1"></i>

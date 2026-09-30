@@ -45,7 +45,7 @@ class UserLaporanController extends Controller
         $komenResult = $request->hasFile('bukti_komen') ? $optimizer->optimizeAndStore($request->file('bukti_komen'), 'laporan/komen') : null;
         $shareResult = $request->hasFile('bukti_share') ? $optimizer->optimizeAndStore($request->file('bukti_share'), 'laporan/share') : null;
 
-        // Anti-Duplicate hash check across system
+        // Anti-Duplicate hash check based on original filename across system
         $hashes = array_filter([
             $likeResult['hash'] ?? null,
             $komenResult['hash'] ?? null,
@@ -71,7 +71,7 @@ class UserLaporanController extends Controller
                     \Illuminate\Support\Facades\Storage::disk('public')->delete($shareResult['path']);
                 }
 
-                return redirect()->back()->withInput()->with('error', 'Sistem Deteksi Duplikasi: File screenshot yang Anda unggah terdeteksi sama persis dengan bukti yang pernah diunggah sebelumnya.');
+                return redirect()->back()->withInput()->with('error', 'Sistem Deteksi Duplikasi: File dengan nama yang sama terdeteksi sudah pernah diunggah sebelumnya. Silakan gunakan nama file lain atau pastikan bukan screenshot yang sama.');
             }
         }
 
@@ -116,11 +116,9 @@ class UserLaporanController extends Controller
 
     public function edit(\App\Models\Laporan $laporan)
     {
-        // Hanya pemilik laporan & status perlu_perbaikan yang bisa edit
-        if ($laporan->user_id !== auth()->id()) abort(403);
-        if ($laporan->status !== 'perlu_perbaikan') {
-            return redirect()->route('user.riwayat.index')
-                ->with('error', 'Hanya laporan berstatus "Perlu Perbaikan" yang bisa diedit.');
+        // Pemilik laporan atau admin diperbolehkan mengedit
+        if ($laporan->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403);
         }
 
         $akunList = \App\Models\AkunInstagram::where('status', 'aktif')->get();
@@ -129,42 +127,87 @@ class UserLaporanController extends Controller
 
     public function update(Request $request, \App\Models\Laporan $laporan)
     {
-        if ($laporan->user_id !== auth()->id()) abort(403);
-        if ($laporan->status !== 'perlu_perbaikan') abort(403);
+        if ($laporan->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
 
-        $request->validate([
-            'keterangan'  => 'nullable|string',
-            'bukti_like'  => 'nullable|image|max:5120',
-            'bukti_komen' => 'nullable|image|max:5120',
-            'bukti_share' => 'nullable|image|max:5120',
+        $validated = $request->validate([
+            'akun_instagram_id' => 'required|exists:akun_instagrams,id',
+            'tanggal_postingan' => 'required|date',
+            'judul_postingan'   => 'required|string|max:255',
+            'link_postingan'    => 'nullable|url|max:500',
+            'keterangan'        => 'nullable|string',
+            'bukti_like'        => 'nullable|image|max:10240',
+            'bukti_komen'       => 'nullable|image|max:10240',
+            'bukti_share'       => 'nullable|image|max:10240',
         ]);
 
         $optimizer = app(\App\Services\ImageOptimizationService::class);
-        $updates   = ['keterangan' => $request->keterangan, 'status' => 'menunggu', 'catatan_admin' => null];
 
-        if ($request->hasFile('bukti_like')) {
+        $likeResult  = $request->hasFile('bukti_like') ? $optimizer->optimizeAndStore($request->file('bukti_like'), 'laporan/like') : null;
+        $komenResult = $request->hasFile('bukti_komen') ? $optimizer->optimizeAndStore($request->file('bukti_komen'), 'laporan/komen') : null;
+        $shareResult = $request->hasFile('bukti_share') ? $optimizer->optimizeAndStore($request->file('bukti_share'), 'laporan/share') : null;
+
+        // Cek duplikasi untuk file-file baru yang diunggah (mengecualikan laporan yang sedang diedit)
+        $newHashes = array_filter([
+            $likeResult['hash'] ?? null,
+            $komenResult['hash'] ?? null,
+            $shareResult['hash'] ?? null
+        ]);
+
+        if (!empty($newHashes)) {
+            $duplicateCount = Laporan::where('id', '!=', $laporan->id)
+                ->where(function($q) use ($newHashes) {
+                    $q->whereIn('hash_like', $newHashes)
+                      ->orWhereIn('hash_komen', $newHashes)
+                      ->orWhereIn('hash_share', $newHashes);
+                })->count();
+
+            if ($duplicateCount > 0) {
+                if ($likeResult && !empty($likeResult['path'])) \Illuminate\Support\Facades\Storage::disk('public')->delete($likeResult['path']);
+                if ($komenResult && !empty($komenResult['path'])) \Illuminate\Support\Facades\Storage::disk('public')->delete($komenResult['path']);
+                if ($shareResult && !empty($shareResult['path'])) \Illuminate\Support\Facades\Storage::disk('public')->delete($shareResult['path']);
+
+                return redirect()->back()->withInput()->with('error', 'Sistem Deteksi Duplikasi: File dengan nama yang sama sudah pernah diunggah pada laporan lain. Silakan gunakan nama file lain.');
+            }
+        }
+
+        // Cari target harian yang sesuai jika ada
+        $targetHarian = \App\Models\TargetHarian::where('akun_instagram_id', $validated['akun_instagram_id'])
+            ->whereDate('tanggal', $validated['tanggal_postingan'])
+            ->first();
+
+        $updates = [
+            'akun_instagram_id' => $validated['akun_instagram_id'],
+            'target_harian_id'  => $targetHarian?->id ?? $laporan->target_harian_id,
+            'tanggal_postingan' => $validated['tanggal_postingan'],
+            'judul_postingan'   => $validated['judul_postingan'],
+            'link_postingan'    => $validated['link_postingan'] ?? null,
+            'keterangan'        => $validated['keterangan'] ?? null,
+            'status'            => 'menunggu', // Reset ke status menunggu agar divalidasi ulang
+            'catatan_admin'     => null,
+        ];
+
+        if ($likeResult) {
             if ($laporan->bukti_like) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_like);
-            $r = $optimizer->optimizeAndStore($request->file('bukti_like'), 'laporan/like');
-            $updates['bukti_like'] = $r['path'];
-            $updates['hash_like']  = $r['hash'];
+            $updates['bukti_like'] = $likeResult['path'];
+            $updates['hash_like']  = $likeResult['hash'];
         }
-        if ($request->hasFile('bukti_komen')) {
+        if ($komenResult) {
             if ($laporan->bukti_komen) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_komen);
-            $r = $optimizer->optimizeAndStore($request->file('bukti_komen'), 'laporan/komen');
-            $updates['bukti_komen'] = $r['path'];
-            $updates['hash_komen']  = $r['hash'];
+            $updates['bukti_komen'] = $komenResult['path'];
+            $updates['hash_komen']  = $komenResult['hash'];
         }
-        if ($request->hasFile('bukti_share')) {
+        if ($shareResult) {
             if ($laporan->bukti_share) \Illuminate\Support\Facades\Storage::disk('public')->delete($laporan->bukti_share);
-            $r = $optimizer->optimizeAndStore($request->file('bukti_share'), 'laporan/share');
-            $updates['bukti_share'] = $r['path'];
-            $updates['hash_share']  = $r['hash'];
+            $updates['bukti_share'] = $shareResult['path'];
+            $updates['hash_share']  = $shareResult['hash'];
         }
 
         $laporan->update($updates);
 
         return redirect()->route('user.riwayat.index')
-            ->with('success', 'Laporan berhasil diperbaiki dan kini menunggu validasi ulang dari admin.');
+            ->with('success', 'Laporan berhasil diperbarui dan kini sedang menunggu validasi admin.');
     }
 
     public function fetchInstagramInfo(Request $request)
